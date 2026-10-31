@@ -1,0 +1,51 @@
+{
+  "core_pin": "7a8a321d04323d49319d0b08e6093a0ddce36b27",
+  "core_source_lock_verified": true,
+  "core_status": "held pending central qualification/review",
+  "cross_install_compatibility": {
+    "inference": "bit-exact OFF/raw/EMA strengths0/0.5/1 after training-row removal and base relocation",
+    "resume": "exact full checkpoint hash after split continuation",
+    "source": "original installed0.1.2 wheel",
+    "training_paths": "fixed by original config; no path migration"
+  },
+  "destination_repository": "HyperGAN/zimage-particle-sliders",
+  "gpu_used": false,
+  "installed_module_bytes_match_extraction": true,
+  "installed_site_packages": true,
+  "installed_tested": true,
+  "namespace_cohort_pin_changed": false,
+  "phase": "standalone-extraction-phase1",
+  "prepared_local": true,
+  "primary_evidence": "Original public qualification documents retained byte-exact in docs/source",
+  "publication_state_at_qualification": "prepared locally before any repository creation or PR publication",
+  "reference_adaptations": [
+    "LoRA parity reference now uses locked shared-core native_lora, same down/up computation",
+    "Historical-format refusal fixture is generated from shared-core LoRA; full historical trainer not moved or rerun here"
+  ],
+  "runtime_code_changed": false,
+  "runtime_sha256": {
+    "__init__.py": "680ae25dcb1fc87414de1fe7ee27cbeb19762d167f0ee64f9d7e7ef4ff250af4",
+    "backend.py": "6cdf3b15dabdfc45c7f04b38927a9b2ca67fc5fe449ee51bc4e91f3cd44acbb0",
+    "cli.py": "753900495cc6bcbd9364503e20bc0ed17c9320bcb4c8da021c117dd58920ca6c",
+    "graphs.py": "930e8691f295359a085cbbe957aff7f53d413eadf4c318e341500bed1d835683",
+    "source_profile.json": "bbb4818820124953a9f4f238bab772dcdc088c3b52a2a34ea9e8e230c55438cf"
+  },
+  "source_commit": "dd4e04f23b89a1d88ef887dbe22b4d5aacd53dc7",
+  "source_repository": "HyperGAN/particle-sliders",
+  "tests": {
+    "installed_sdist": "37 passed in 16.74s",
+    "installed_wheel": "37 passed in 17.31s",
+    "pip_check": "No broken requirements found."
+  },
+  "umbrella_path_in_sys_path": false,
+  "versions": {
+    "diffusers": "0.42.1",
+    "embedded-zimage-shared-preview": "0.1.2",
+    "hndl": "0.10.0",
+    "hypergan": "2.0.0",
+    "particle-sliders-core": "0.12.0",
+    "particlegan": "0.9.4",
+    "torch": "2.6.0+cpu"
+  },
+  "workflow_release_impact": "No workflows, releases, deployment, access changes or weights; source-only review branch"
+}

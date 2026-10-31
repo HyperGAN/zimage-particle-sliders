@@ -1,0 +1,6 @@
+include QUALIFICATION.md
+include qualification.json
+include EXTRACTION.md
+include provenance.json
+include LICENSE
+recursive-include docs/source *.md *.json
