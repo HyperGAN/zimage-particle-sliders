@@ -255,12 +255,17 @@ def test_every_hook_removal_attempted_if_cleanup_fails(staged,monkeypatch):
     native,rows,config=staged
     session=product.BACKEND.open(config,model=native)
     handle=session.game.network._handles[0];original=handle.remove
+    calls=[]
     def fail():
-        original();raise RuntimeError('remove failed after removal')
+        original();calls.append(1)
+        if len(calls)==1:raise RuntimeError('remove failed after removal')
     monkeypatch.setattr(handle,'remove',fail)
     with pytest.raises(RuntimeError,match='remove failed'):session.close()
     assert not any(m._forward_hooks for m in native.modules())
     assert all(p.requires_grad for p in native.parameters())
+    assert not session.closed
+    session.close()
+    assert session.closed and len(calls)==2
 
 
 def test_executable_cli_native_training_and_inference_after_data_removal(staged,tmp_path):
@@ -532,7 +537,7 @@ def test_direct_factory_success_restores_rng_and_binds_policy(staged):
     try:
         assert torch.equal(before,torch.get_rng_state())
         assert binding.inference.configuration['initialization']['policy']==product.INITIALIZATION_POLICY
-        assert product.COHORT.endswith('-v3')
+        assert product.COHORT.endswith('-v4')
         assert product.PROTOCOL=='embedded-zimage-native-4d-raw-velocity-v2'
         assert all(item.row.guidance==1. for item in binding.game.rows)
         row=binding.game.rows[0].row
@@ -594,3 +599,93 @@ def test_installed_entrypoints_and_cli_are_umbrella_independent(tmp_path):
     result=subprocess.run([str(command),'--help'],cwd=tmp_path,text=True,capture_output=True)
     assert result.returncode==0,result.stderr
     assert '{train,response}' in result.stdout
+
+
+def test_close_before_hook_removal_failure_is_retryable_inside_ambient_exception(staged,monkeypatch):
+    native,rows,config=staged
+    session=product.BACKEND.open(config,model=native)
+    handle=session.game.network._handles[0];original=handle.remove;calls=[]
+    def fail_once():
+        calls.append(1)
+        if len(calls)==1:raise RuntimeError('hook removal failed before mutation')
+        original()
+    monkeypatch.setattr(handle,'remove',fail_once)
+    before=torch.get_rng_state().clone()
+    try:raise LookupError('unrelated ambient exception')
+    except LookupError:
+        with pytest.raises(RuntimeError,match='before mutation'):session.close()
+        assert not session.closed
+        assert sum(len(m._forward_hooks) for m in native.modules())==1
+        assert session.game.network._handles==[handle]
+        session.close()
+    assert session.closed and len(calls)==2
+    assert not any(m._forward_hooks for m in native.modules())
+    assert all(p.requires_grad for p in native.parameters())
+    assert torch.equal(before,torch.get_rng_state())
+
+
+def test_factory_operation_error_survives_cleanup_error_on_new_core(staged,monkeypatch):
+    native,rows,config=staged
+    marker=RuntimeError('original teacher failure');cleanup=RuntimeError('cleanup after removal failure')
+    original=nn.Module.register_forward_hook;handles=[]
+    def register(module,*args,**kwargs):
+        handle=original(module,*args,**kwargs)
+        if not handles:
+            remove=handle.remove
+            def fail():remove();raise cleanup
+            monkeypatch.setattr(handle,'remove',fail)
+        handles.append(handle);return handle
+    def fail_teacher(*args,**kwargs):raise marker
+    monkeypatch.setattr(nn.Module,'register_forward_hook',register)
+    monkeypatch.setattr(product.ImageResponseAdapter,'prepare',fail_teacher)
+    before=torch.get_rng_state().clone()
+    with pytest.raises(RuntimeError) as caught:product.BACKEND.open(config,model=native)
+    assert caught.value is marker
+    assert any('cleanup after removal' in note for note in marker.__notes__)
+    assert not any(m._forward_hooks for m in native.modules())
+    assert all(p.requires_grad for p in native.parameters())
+    assert torch.equal(before,torch.get_rng_state())
+
+
+def test_observation_primary_error_survives_native_restore_failure(staged,monkeypatch):
+    native,rows,config=staged
+    with product.BACKEND.open(config,model=native) as session:
+        marker=RuntimeError('original observation failure');cleanup=RuntimeError('native observation cleanup failure')
+        original=product.native_cleanup
+        def capture(root):
+            restore=original(root)
+            def fail():restore();raise cleanup
+            return fail
+        def generated(*args,**kwargs):raise marker
+        before=session.checkpoint();rng=torch.get_rng_state().clone()
+        with monkeypatch.context() as patch:
+            patch.setattr(product,'native_cleanup',capture)
+            patch.setattr(session.game.backend,'generated',generated)
+            with pytest.raises(RuntimeError) as caught:session.evaluate()
+        assert caught.value is marker
+        assert any('native observation cleanup' in note for note in marker.__notes__)
+        equal(before,session.checkpoint());assert torch.equal(rng,torch.get_rng_state())
+
+
+def test_recursive_core_lock_covers_license_and_unexpected_nonpython_data(staged,tmp_path,monkeypatch):
+    import particle_sliders,shutil
+    root=Path(particle_sliders.__file__).parent;target=tmp_path/'core'
+    closure=product.source_closure(root)
+    assert 'LICENSE' in closure
+    for relative in closure:
+        path=target/relative;path.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(root/relative,path)
+    data=target/'nested'/'runtime.data';data.parent.mkdir();data.write_bytes(b'extra runtime data')
+    assert 'nested/runtime.data' in product.source_closure(target)
+    monkeypatch.setattr(particle_sliders,'__file__',str(target/'__init__.py'))
+    native,rows,config=staged
+    with pytest.raises(ValueError,match='core lifecycle/source'):product.BACKEND.open(config,model=native)
+    assert not any(m._forward_hooks for m in native.modules())
+
+
+def test_previous_core_identity_refuses_before_native_attachment(staged):
+    native,rows,config=staged
+    options=config.options;options['model_identity']['core_commit']='7a8a321d04323d49319d0b08e6093a0ddce36b27'
+    old=SessionConfig(product.NAME,product.COHORT,**options)
+    with pytest.raises(ValueError,match='identity differs before attachment'):product.BACKEND.open(old,model=native)
+    assert not any(m._forward_hooks for m in native.modules())
+    assert all(p.requires_grad for p in native.parameters())

@@ -1,28 +1,33 @@
-# Phase1 extraction boundary
+# Phase 1 extraction boundary
 
 Source: public HyperGAN/particle-sliders at
 `dd4e04f23b89a1d88ef887dbe22b4d5aacd53dc7`, product root
 `packages/embedded-zimage-shared/`. Destination: HyperGAN/zimage-particle-sliders.
 This is an allowlisted source export, not a mirrored Git history.
 
-The runtime `src/embedded_zimage_shared/*` files and pyproject.toml are byte-exact
-exports. Distribution `embedded-zimage-shared-preview`0.1.2, import namespace,
-entry points, initialization policy, cohortv3 and native response/row protocolv2
-are unchanged. Existing artifact behavior and source identities are preserved.
+At phase 1 commit `350437ed5e26df6a7c4ec58105d5993c224edf3d`, runtime files
+and `pyproject.toml` were byte-exact exports. Distribution version 0.1.2, its
+namespace, entry points, initialization policy, cohort v3 and native response/row
+protocol version 2 were preserved. The active coordinated core migration is a
+separate cohort v4 candidate described in CORE-MIGRATION.md; original phase 1
+source and packet identities remain available at their original immutable pin.
 Original MIT LICENSE is copied with its copyright/attribution intact.
 
-External runtime dependencies remain the exact pinned shared-core candidate7a8,
-its HyperGAN/HNDL closure, Diffusers0.42.1, safetensors0.8.0 and their resolved
-CPU dependencies. The shared core remains held pending central qualification;
+Phase 1 used the exact shared core commit `7a8a321d04323d49319d0b08e6093a0ddce36b27`,
+its HyperGAN/HNDL closure, Diffusers 0.42.1 and safetensors 0.8.0. The active
+modern cohort now pins the centrally cleared exact `a794e3b4a8813b012f2c4faa3da82b78d4a90214` source;
 its public VCS package subdirectory is a shared-library dependency, not an
-umbrella-local runtime import. No shared-core API or graph optimization is added.
+umbrella-local runtime import. No shared-core API or HNDL graph optimization is
+added. Product cleanup wrappers follow the new core's explicit-primary-error and retryable-close contract.
 
 Two tests previously depended on umbrella files. The paired LoRA parity reference
 now imports the locked shared-core native_lora.LoRANetwork, which implements the
-same ordinary down/up computation. The format-refusal test generates a temporary
-historical-format safetensors fixture from that reference. It does not claim to
-rerun the full historical UNI trainer. The exact original public36-case/native
-and16-case/historical receipts remain unchanged under docs/source/.
+same ordinary down/up computation. The LoRAModule AST matches the historical
+module, but shared LoRANetwork discovery differs. These tests cover numerical
+module parity and bounded shared target names, not full historical discovery.
+The format-refusal test generates a temporary historical-format safetensors fixture from that reference. It does not claim to
+rerun the full historical UNI trainer. The exact original public 36-case native
+and 16-case historical receipts remain unchanged under docs/source/.
 
 ## Tracked later migration
 
@@ -39,7 +44,7 @@ by the installed modern distribution:
 The historical trainer also uses the multi-model conceptmod/textsliders/lora.py
 helper. Moving it wholesale would import unrelated model support; its future
 shared/model-specific ownership needs review. No historical files are deleted,
-rewritten or silently substituted in phase1.
+rewritten or silently substituted in phase 1.
 
 ## Publication and qualification boundaries
 

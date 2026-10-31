@@ -70,8 +70,8 @@ class ZImageLoRA(nn.Module):
                         return output
                     return output + projection(args[0]) * self.scale
                 self._handles.append(host.register_forward_hook(apply))
-        except BaseException:
-            self.close()
+        except BaseException as primary:
+            _restore_all([self.close], primary=primary)
             raise
 
     @contextmanager
@@ -87,5 +87,7 @@ class ZImageLoRA(nn.Module):
             self.scale = previous
 
     def close(self):
-        handles, self._handles = self._handles, []
-        _restore_all([handle.remove for handle in handles])
+        def remove(handle):
+            handle.remove()
+            self._handles.remove(handle)
+        _restore_all([lambda handle=handle: remove(handle) for handle in tuple(self._handles)])

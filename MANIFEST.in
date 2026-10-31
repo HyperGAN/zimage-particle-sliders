@@ -4,3 +4,4 @@ include EXTRACTION.md
 include provenance.json
 include LICENSE
 recursive-include docs/source *.md *.json
+include CORE-MIGRATION.md

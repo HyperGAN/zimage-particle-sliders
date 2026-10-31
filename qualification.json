@@ -1,51 +1,111 @@
 {
-  "core_pin": "7a8a321d04323d49319d0b08e6093a0ddce36b27",
-  "core_source_lock_verified": true,
-  "core_status": "held pending central qualification/review",
-  "cross_install_compatibility": {
-    "inference": "bit-exact OFF/raw/EMA strengths0/0.5/1 after training-row removal and base relocation",
-    "resume": "exact full checkpoint hash after split continuation",
-    "source": "original installed0.1.2 wheel",
-    "training_paths": "fixed by original config; no path migration"
+  "actual_old_packet_refusal": {
+    "native_prepare_calls": 0,
+    "new_cohort": "embedded-zimage-adapter-gan-pg094-hg-hndl010-v4",
+    "new_core": "a794e3b4a8813b012f2c4faa3da82b78d4a90214",
+    "old_cohort": "embedded-zimage-adapter-gan-pg094-hg-hndl010-v3",
+    "old_core": "7a8a321d04323d49319d0b08e6093a0ddce36b27",
+    "old_file_bytes_unchanged": true,
+    "old_product_head": "350437ed5e26df6a7c4ec58105d5993c224edf3d",
+    "packets_sha256": {
+      "ema.pt": "899fcafc6df63273fedcfe3285f900ec4a35a135fe09f061ac5f749c24140386",
+      "raw.pt": "2af6f8588e71646c158a6ed1d7727c08a1bf437bc22baa2b7497021a4f4f4a94",
+      "resume.pt": "6093148cae330a3147773644999d826c47f092bfd935ca0ca75176dea1abda26"
+    },
+    "receipts": [
+      {
+        "packet": "An actual core 7a8 / cohort v3 training checkpoint",
+        "reason": "packet kind/config/cohort differs; use its original pin or explicit migration",
+        "refused": true
+      },
+      {
+        "packet": "An actual core 7a8 / cohort v3 raw export",
+        "reason": "native factory source, protocol or capabilities differ",
+        "refused": true
+      },
+      {
+        "packet": "An actual core 7a8 / cohort v3 ema export",
+        "reason": "native factory source, protocol or capabilities differ",
+        "refused": true
+      }
+    ]
   },
-  "destination_repository": "HyperGAN/zimage-particle-sliders",
+  "artifact_identity_impact": "Version 0.1.2 / cohort v3 packets retain their old core and source identities. Version 0.1.3 / cohort v4 refuses them before native preparation. No files or metadata were rewritten.",
+  "canonical_repository": "HyperGAN/zimage-particle-sliders",
+  "cleanup_contract": "Explicit primary errors are retained; failed hook handles remain available for retryable close.",
+  "cohort": "embedded-zimage-adapter-gan-pg094-hg-hndl010-v4",
+  "core_pin": "a794e3b4a8813b012f2c4faa3da82b78d4a90214",
+  "core_source_lock_verified": true,
+  "core_source_origin": {
+    "all_installed_bytes_match_exact_git_source": true,
+    "core_commit": "a794e3b4a8813b012f2c4faa3da82b78d4a90214",
+    "direct_url": {
+      "subdirectory": "packages/particle-sliders-core",
+      "url": "https://github.com/HyperGAN/particle-sliders.git",
+      "vcs_info": {
+        "commit_id": "a794e3b4a8813b012f2c4faa3da82b78d4a90214",
+        "requested_revision": "a794e3b4a8813b012f2c4faa3da82b78d4a90214",
+        "vcs": "git"
+      }
+    },
+    "reference_boundary": {
+      "claim": "numerical module/reference parity and bounded shared target names only; no full historical discovery parity",
+      "historical_LoRAModule_AST_matches": true,
+      "historical_LoRANetwork_AST_matches": false
+    },
+    "source_data_files": 50,
+    "version": "0.12.0"
+  },
   "gpu_used": false,
-  "installed_module_bytes_match_extraction": true,
+  "hndl_graph_computation_unchanged": true,
+  "hndl_graph_text_sha256": "ab56cd9472d281422b77c12b49a22b68ffef8b48b94445e212e9b65333ebc866",
+  "initialization_policy": {
+    "device": "cpu",
+    "policy": "scoped-cpu-initialization-streams-v1",
+    "seed": 7,
+    "streams": {
+      "adapter": 7,
+      "critic": 8,
+      "native_loader": 9,
+      "preparation": 10
+    }
+  },
+  "installed_product_bytes_match_checkout": true,
   "installed_site_packages": true,
-  "installed_tested": true,
-  "namespace_cohort_pin_changed": false,
-  "phase": "standalone-extraction-phase1",
-  "prepared_local": true,
-  "primary_evidence": "Original public qualification documents retained byte-exact in docs/source",
-  "publication_state_at_qualification": "prepared locally before any repository creation or PR publication",
-  "reference_adaptations": [
-    "LoRA parity reference now uses locked shared-core native_lora, same down/up computation",
-    "Historical-format refusal fixture is generated from shared-core LoRA; full historical trainer not moved or rerun here"
-  ],
-  "runtime_code_changed": false,
+  "native_guidance": "Native guidance 0 remains direct conditional prediction through shared guidance 1.",
+  "native_qualification": "Tiny random native CPU fixtures only. No pretrained, full-model, GPU, resource or image-quality admission.",
+  "native_response_row_protocol": "embedded-zimage-native-4d-raw-velocity-v2",
+  "phase": "Coordinated final modern-core migration",
+  "phase1_evidence": "Immutable phase 1 source and same-core cross-install receipts remain at product head 350437ed5e26df6a7c4ec58105d5993c224edf3d and in docs/source. They do not imply cross-core compatibility.",
+  "previous_product_head": "350437ed5e26df6a7c4ec58105d5993c224edf3d",
+  "product_version": "0.1.3",
+  "return_review_required": true,
   "runtime_sha256": {
     "__init__.py": "680ae25dcb1fc87414de1fe7ee27cbeb19762d167f0ee64f9d7e7ef4ff250af4",
-    "backend.py": "6cdf3b15dabdfc45c7f04b38927a9b2ca67fc5fe449ee51bc4e91f3cd44acbb0",
+    "backend.py": "fab4356532efc27d0e3c5600df5c6c7c4135b5eb78782cfc160fa0ebde44668d",
     "cli.py": "753900495cc6bcbd9364503e20bc0ed17c9320bcb4c8da021c117dd58920ca6c",
-    "graphs.py": "930e8691f295359a085cbbe957aff7f53d413eadf4c318e341500bed1d835683",
-    "source_profile.json": "bbb4818820124953a9f4f238bab772dcdc088c3b52a2a34ea9e8e230c55438cf"
+    "graphs.py": "4fc5854d996aae3faf8426f13fcd9cd05289122d1e23f38f30e90fabec6ec086",
+    "source_profile.json": "09696c52d5ca5c4e814b4eed53eefd3eb24f9e5ff34cdad5ab1643b9bc7dc9de"
   },
-  "source_commit": "dd4e04f23b89a1d88ef887dbe22b4d5aacd53dc7",
+  "shared_api_limit": "Deep same-config training-signature checks still follow reversible preparation. Universal pre-hook refusal is not claimed.",
+  "source_export_commit": "dd4e04f23b89a1d88ef887dbe22b4d5aacd53dc7",
   "source_repository": "HyperGAN/particle-sliders",
   "tests": {
-    "installed_sdist": "37 passed in 16.74s",
-    "installed_wheel": "37 passed in 17.31s",
+    "clean_public_cpu_resolution": "Succeeded with the exact public Git dependency and CPU wheel.",
+    "installed_sdist": "42 passed in 17.35s",
+    "installed_wheel": "42 passed in 17.65s",
     "pip_check": "No broken requirements found."
   },
-  "umbrella_path_in_sys_path": false,
   "versions": {
     "diffusers": "0.42.1",
-    "embedded-zimage-shared-preview": "0.1.2",
+    "embedded-zimage-shared-preview": "0.1.3",
     "hndl": "0.10.0",
     "hypergan": "2.0.0",
     "particle-sliders-core": "0.12.0",
     "particlegan": "0.9.4",
+    "safetensors": "0.8.0",
+    "setuptools": "84.2.1",
     "torch": "2.6.0+cpu"
   },
-  "workflow_release_impact": "No workflows, releases, deployment, access changes or weights; source-only review branch"
+  "workflow_release_impact": "No workflows, visibility, access changes, releases, deployments, model weights or merges."
 }

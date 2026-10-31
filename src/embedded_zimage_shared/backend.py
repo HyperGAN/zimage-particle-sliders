@@ -28,13 +28,13 @@ from particle_sliders.response import ResponseBackend, ResponseCapabilities
 from .graphs import GRAPH_SHA256, ZImageLoRA, targets
 
 NAME = 'embedded-zimage-shared'
-COHORT = 'embedded-zimage-adapter-gan-pg094-hg-hndl010-v3'
+COHORT = 'embedded-zimage-adapter-gan-pg094-hg-hndl010-v4'
 PROTOCOL = 'embedded-zimage-native-4d-raw-velocity-v2'
-CORE_COMMIT = '7a8a321d04323d49319d0b08e6093a0ddce36b27'
+CORE_COMMIT = 'a794e3b4a8813b012f2c4faa3da82b78d4a90214'
 CORE_HASHES = {
-    'pg09.py': 'f4fe77d6b417c023355c9398c1d000072f35072fb5c1b923c60c5799983d2b56',
-    'lifecycle.py': 'a584c2ab2c97eb41c2329aa92d8935da4d7d6773e5babf66aea6a492cd855a05',
-    'inference.py': 'bd51ec7ae8b512b57f2964f5d5e80a2bd1280083529e17c64726e6ab04494065',
+    'pg09.py': '8d347665884fc371505e39819d6ee1081d893a8b2a8bbf8e5842b0d11f54c895',
+    'lifecycle.py': 'ec27ef58ba544ddaf4f5e51ff48dd08d73686bf81df4e500d822500a297f2c29',
+    'inference.py': 'a44ad31b8976f5ad4519f658e4d5ab3c0ab875c4345696eba728835971be914a',
 }
 
 
@@ -182,7 +182,8 @@ def bundle_identity(directory):
 def source_closure(root):
     root = Path(root)
     return {p.relative_to(root).as_posix():file_sha256(p) for p in sorted(root.rglob('*'))
-            if p.is_file() and p.suffix in ('.py', '.hndl', '.json')}
+            if p.is_file() and '__pycache__' not in p.relative_to(root).parts
+            and p.suffix not in ('.pyc', '.pyo')}
 
 
 def _core_gate():
@@ -192,7 +193,8 @@ def _core_gate():
         raise ValueError('isolated core0.12/diffusers0.42.1 preview required')
     profile = json.loads(Path(__file__).with_name('source_profile.json').read_text())
     actual = source_closure(root)
-    if (profile.get('core_closure') != 'recursive-relative-path-sha256-v1'
+    if (profile.get('core_version') != version('particle-sliders-core')
+            or profile.get('core_closure') != 'recursive-source-data-sha256-v2'
             or profile['core_commit'] != CORE_COMMIT or actual != profile['core_sources']) or any(
             actual.get(name) != digest for name,digest in CORE_HASHES.items()):
         raise ValueError('core lifecycle/source differs from the pinned CPU-tested candidate')
@@ -331,8 +333,8 @@ def _native(options, identity, model=None, *, initialization=None):
             network = ZImageLoRA(model)
         adapter = ImageResponseAdapter('zimage', model, network, model_identity=identity)
         return adapter, close
-    except BaseException:
-        close()
+    except BaseException as primary:
+        _restore_all([close], primary=primary)
         raise
 
 
@@ -342,7 +344,10 @@ def _observe(adapter):
         restore = native_cleanup(adapter.transformer)
         try:
             yield
-        finally:
+        except BaseException as primary:
+            _restore_all([restore], primary=primary)
+            raise
+        else:
             restore()
     return observe
 
@@ -369,8 +374,8 @@ def _prepare(options, *, model, initialization):
         spec = INFERENCE_BACKEND.specification(adapter, model_identity=options['model_identity'],
             protocol=PROTOCOL, configuration=configuration)
         return Binding(game, close, inference=spec, observation=_observe(adapter))
-    except BaseException:
-        close()
+    except BaseException as primary:
+        _restore_all([close], primary=primary)
         raise
 
 
@@ -406,8 +411,8 @@ def _prepare_inference(options, spec, *, initialization):
             return adapter.velocity(condition, latent, timestep, scale=strength).detach().clone()
         return InferenceBinding(adapter.network, native_identity(adapter, model_identity=identity, protocol=PROTOCOL),
             close, response=response, observation=_observe(adapter))
-    except BaseException:
-        close()
+    except BaseException as primary:
+        _restore_all([close], primary=primary)
         raise
 
 
