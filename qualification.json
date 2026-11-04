@@ -1,0 +1,68 @@
+{
+  "canonical_repository": "HyperGAN/zimage-particle-sliders",
+  "cohort": "embedded-zimage-adapter-gan-pg094-hg-hndl010-v5",
+  "compatibility": "New cohort/source identity. Old packets and source-bound rows keep their original immutable pin; no cross-cohort portability claimed.",
+  "core_closure": "recursive-distribution-source-data-sha256-v3",
+  "core_lock_derived_from_exact_git_tree": true,
+  "core_pin": "ddb41423bcefc1fe76cd94d0f9b367353b3ea137",
+  "core_source_data_files": 574,
+  "core_source_lock_verified": true,
+  "core_source_origin": {
+    "subdirectory": "packages/particle-sliders-core",
+    "url": "https://github.com/HyperGAN/particle-sliders.git",
+    "vcs_info": {
+      "commit_id": "ddb41423bcefc1fe76cd94d0f9b367353b3ea137",
+      "requested_revision": "ddb41423bcefc1fe76cd94d0f9b367353b3ea137",
+      "vcs": "git"
+    }
+  },
+  "cuda_initialized": false,
+  "formula": {
+    "engine": "official ParticleGAN0.9.4 non-saturating logistic/BISPF/DualNorm",
+    "full_particle_prior_recipe": false,
+    "generator_arm": "adapter_gan",
+    "particles": null
+  },
+  "gpu_used": false,
+  "historical_weights_and_recipes_unchanged": true,
+  "installed_site_packages": true,
+  "native_qualification": "Tiny random native API FP32 CPU fixtures only. No pretrained/GPU/image-quality/resource/production admission.",
+  "no_inherited_site_packages": true,
+  "other_branches_unchanged": true,
+  "pg_source_commit": "330eb94ee748cdcad131b0275d8de75fd5a7f96f",
+  "phase": "PG094 upgrade including merged shared execution APIs",
+  "pretrained_models_downloaded": false,
+  "previous_cohort": "embedded-zimage-adapter-gan-pg094-hg-hndl010-v4",
+  "previous_core": "a794e3b4a8813b012f2c4faa3da82b78d4a90214",
+  "previous_evidence": "docs/cohort-v4/",
+  "previous_receipts_preserved_byte_for_byte": true,
+  "product_version": "0.1.4",
+  "python": "3.11.17",
+  "return_review_required": true,
+  "runtime_sha256": {
+    "__init__.py": "680ae25dcb1fc87414de1fe7ee27cbeb19762d167f0ee64f9d7e7ef4ff250af4",
+    "backend.py": "16255f6e57fcb0cc939e5fa8076792447b9998e7dffdd441507158e192f7ffff",
+    "cli.py": "753900495cc6bcbd9364503e20bc0ed17c9320bcb4c8da021c117dd58920ca6c",
+    "graphs.py": "4fc5854d996aae3faf8426f13fcd9cd05289122d1e23f38f30e90fabec6ec086",
+    "source_profile.json": "158442cc63549c86813d4dddb4e083702d5bbf31b8dba1521557af621979c51f",
+    "training_profile.py": "ab755360a577e876eba0d6f7a0e1ca7a5faff22aeb550bea5581827d1ba0077e"
+  },
+  "shared_api_limit": "Deep same-config training-signature checks follow reversible preparation; universal pre-hook packet refusal not claimed.",
+  "tests": {
+    "closure": "574 tracked source/data files, installed exact Git bytes, public VCS origin; compatibility-namespace/native/builder/source tamper refusal.",
+    "installed_cpu_suite": "47 passed in 28.68s",
+    "pip_check": "No broken requirements found.",
+    "shared_execution": "Installed profile plan/check; train to step2 with periodic checkpoints; exact resume to4 versus uninterrupted; EMA v1/v2 exports; data-independent v2 inference; dummy=false rejected before output creation."
+  },
+  "versions": {
+    "diffusers": "0.42.1",
+    "embedded-zimage-shared-preview": "0.1.4",
+    "hndl": "0.10.0",
+    "hypergan": "2.0.0",
+    "particle-sliders-core": "0.12.0",
+    "particlegan": "0.9.4",
+    "safetensors": "0.8.0",
+    "torch": "2.15.0+cpu"
+  },
+  "workflow_release_impact": "No release, deployment, weight publication or merge."
+}
