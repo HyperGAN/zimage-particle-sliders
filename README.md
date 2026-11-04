@@ -69,8 +69,8 @@ success and failure. This profile does not discover or initialize CUDA devices.
 ```sh
 embedded-zimage-shared train --model-dir LOCAL_MODEL --rows frozen-rows.pt \
   --shape 1 4 4 4 --steps 4 --stop-after 2 \
-  --checkpoint modern-resume.pt --export modern-ema.pt
-embedded-zimage-shared response --model-dir LOCAL_MODEL --artifact modern-ema.pt \
+  --checkpoint modern-resume.pt --export modern-raw.pt
+embedded-zimage-shared response --model-dir LOCAL_MODEL --artifact modern-raw.pt \
   --request native-request.pt --strength 0.5 --output native-velocity.pt
 ```
 
@@ -80,6 +80,10 @@ Native requests contain only `condition={"embeds": tensor}`, `latent` and
 inference without training rows, critics or optimizers.
 
 ## Artifact and review boundaries
+
+New training uses the selected upstream ParticleGAN recipe with raw exports and
+no host EMA by default. `--ema-decay` and `--selection ema` are an explicit
+nondefault experiment; selecting EMA without its decay is rejected before loading.
 
 Version 0.1.2/cohort v3 remains bound to core `7a8a321d04323d49319d0b08e6093a0ddce36b27`
 and its original source pin. Version 0.1.4/cohort v5 uses a new exact core/source identity and refuses

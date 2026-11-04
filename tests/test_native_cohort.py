@@ -147,6 +147,36 @@ def test_actual_shared_updates_exact_resume_ema_strength_and_native_only_inferen
     assert any(not torch.equal(raw['network'][k],ema['network'][k]) for k in raw['network'])
 
 
+def test_cli_default_uses_raw_weights_without_host_ema(staged, tmp_path):
+    from embedded_zimage_shared.cli import main
+
+    checkpoint, export = tmp_path / 'cli-training.pt', tmp_path / 'cli-raw.pt'
+    main(['train', '--model-dir', str(tmp_path / 'model'), '--rows', str(tmp_path / 'rows.pt'),
+          '--shape', '1', '4', '4', '4', '--steps', '2',
+          '--checkpoint', str(checkpoint), '--export', str(export)])
+    packet = torch.load(export, weights_only=True)
+    assert packet['selection'] == 'raw'
+    saved = torch.load(checkpoint, weights_only=True)['manifest']['config']
+    config = SessionConfig(saved['backend'], saved['cohort'], **saved['options'])
+    with open_response(config, resume=checkpoint) as session:
+        assert session.ema.decay is None and session.ema.values is None
+        equal(packet['network'], session.game.network.state_dict())
+
+
+def test_cli_ema_selection_requires_explicit_experiment_before_loading(monkeypatch):
+    from embedded_zimage_shared import cli
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError('invalid EMA selection must reject before native loading')
+
+    monkeypatch.setattr(cli, 'bundle_identity', forbidden)
+    with pytest.raises(SystemExit) as error:
+        cli.main(['train', '--model-dir', 'missing-model', '--rows', 'missing-rows',
+                  '--shape', '1', '4', '4', '4', '--selection', 'ema',
+                  '--checkpoint', 'unused.pt', '--export', 'unused-export.pt'])
+    assert error.value.code == 2
+
+
 @pytest.mark.parametrize('changed',['model','shape','profile','source','rows','hooks'])
 def test_mismatch_rejects_before_native_mutation(staged,monkeypatch,changed):
     native,rows,config=staged
