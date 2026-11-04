@@ -1,26 +1,25 @@
 # Z-Image particle sliders
 
 This is the canonical repository for the opt-in Z-Image shared-game CPU preview.
-The active distribution is `embedded-zimage-shared-preview` version `0.1.3`, with
+The active distribution is `embedded-zimage-shared-preview` version `0.1.4`, with
 import namespace `embedded_zimage_shared` and cohort
-`embedded-zimage-adapter-gan-pg094-hg-hndl010-v4`.
+`embedded-zimage-adapter-gan-pg094-hg-hndl010-v5`.
 
 The active candidate pins shared core
-`a794e3b4a8813b012f2c4faa3da82b78d4a90214`. The central owner cleared that exact
-source for coordinated software-fixture migration. This does not qualify a
+`ddb41423bcefc1fe76cd94d0f9b367353b3ea137`, including the merged shared
+plan and isolated execution APIs. This does not qualify a
 pretrained Z-Image model, GPU training, production resources, image quality or
 new response domains. This product is tested with tiny random native models on
 CPU only. Claude RETURN review remains required before landing this draft.
 
 ## Separate installation
 
-Use a fresh Python environment. The tested runtime is Python 3.12.15 with
-PyTorch 2.6.0+cpu. For Linux x86_64 and Python 3.12:
+Use a fresh Python environment. The current tested runtime is Python 3.11.17 with
+PyTorch 2.15.0+cpu. For Linux x86_64 and Python 3.11:
 
 ```sh
-python3.12 -m venv .venv
-.venv/bin/python -m pip install --index-url https://pypi.org/simple \
-  'torch @ https://download.pytorch.org/whl/cpu/torch-2.6.0%2Bcpu-cp312-cp312-linux_x86_64.whl'
+python3.11 -m venv .venv
+.venv/bin/python -m pip install --index-url https://download.pytorch.org/whl/cpu 'torch==2.15.0+cpu'
 .venv/bin/python -m pip install '.[test]'
 .venv/bin/python -m pip check
 ```
@@ -83,8 +82,10 @@ inference without training rows, critics or optimizers.
 ## Artifact and review boundaries
 
 Version 0.1.2/cohort v3 remains bound to core `7a8a321d04323d49319d0b08e6093a0ddce36b27`
-and its original source pin. Version 0.1.3/cohort v4 refuses those training and
-inference packets before native preparation. No old packet is rewritten or
+and its original source pin. Version 0.1.4/cohort v5 uses a new exact core/source identity and refuses
+previous-cohort packets. Version 0.1.3/cohort v4 retains its original
+`a794e3b4a8813b012f2c4faa3da82b78d4a90214` pin and archived evidence
+in `docs/cohort-v4/`. No old packet is rewritten or
 relabeled. The native response/row protocol remains version 2; caches whose model
 identity binds the old core must be regenerated explicitly for the new cohort.
 
@@ -96,7 +97,8 @@ priority over cleanup failures. Deep same-config training-signature admission
 still follows reversible preparation in the shared core. Universal pre-hook
 packet refusal is not claimed.
 
-`CORE-MIGRATION.md` records the current coordinated pin and test boundary.
+`CORE-MIGRATION.md` and `docs/pg094-upgrade.md` record the current pin,
+complete 574-file source closure, installed dispatcher and test boundary.
 `EXTRACTION.md` and `provenance.json` retain the source-export history.
 `docs/source/` contains immutable archival evidence with its original formatting;
 it is not the current installation guide. The LoRA module reference matches the

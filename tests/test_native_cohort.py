@@ -537,7 +537,7 @@ def test_direct_factory_success_restores_rng_and_binds_policy(staged):
     try:
         assert torch.equal(before,torch.get_rng_state())
         assert binding.inference.configuration['initialization']['policy']==product.INITIALIZATION_POLICY
-        assert product.COHORT.endswith('-v4')
+        assert product.COHORT.endswith('-v5')
         assert product.PROTOCOL=='embedded-zimage-native-4d-raw-velocity-v2'
         assert all(item.row.guidance==1. for item in binding.game.rows)
         row=binding.game.rows[0].row
@@ -682,10 +682,85 @@ def test_recursive_core_lock_covers_license_and_unexpected_nonpython_data(staged
     assert not any(m._forward_hooks for m in native.modules())
 
 
-def test_previous_core_identity_refuses_before_native_attachment(staged):
+@pytest.mark.parametrize('old_pin', ['7a8a321d04323d49319d0b08e6093a0ddce36b27',
+    'a794e3b4a8813b012f2c4faa3da82b78d4a90214'])
+def test_previous_core_identity_refuses_before_native_attachment(staged, old_pin):
     native,rows,config=staged
-    options=config.options;options['model_identity']['core_commit']='7a8a321d04323d49319d0b08e6093a0ddce36b27'
+    options=config.options;options['model_identity']['core_commit']=old_pin
     old=SessionConfig(product.NAME,product.COHORT,**options)
     with pytest.raises(ValueError,match='identity differs before attachment'):product.BACKEND.open(old,model=native)
     assert not any(m._forward_hooks for m in native.modules())
     assert all(p.requires_grad for p in native.parameters())
+
+
+@pytest.mark.parametrize('marker', [1, 'true'])
+def test_fixture_marker_requires_actual_boolean_before_model_load(staged, marker, monkeypatch):
+    _, _, config = staged
+    options = config.options
+    options['dummy'] = marker
+    monkeypatch.setattr(product, 'bundle_identity', lambda *args: pytest.fail('invalid fixture marker must fail before native identity'))
+    with pytest.raises(ValueError, match='actual boolean'):
+        product.validate(options)
+
+
+def test_distribution_source_lock_includes_compatibility_namespace(staged, tmp_path, monkeypatch):
+    import importlib.metadata
+    original = importlib.metadata.distribution('particle-sliders-core')
+    compatibility = tmp_path / 'concept_slider_core'
+    compatibility.mkdir()
+    (compatibility / '__init__.py').write_text('injected = True\n')
+    class ChangedCompatibility:
+        def __getattr__(self, name):
+            return getattr(original, name)
+        def locate_file(self, name):
+            return compatibility if name == 'concept_slider_core' else original.locate_file(name)
+    monkeypatch.setattr(product, 'distribution', lambda name: ChangedCompatibility())
+    with pytest.raises(ValueError, match='core lifecycle/source'):
+        product.validate(staged[2].options)
+    assert not any(module._forward_hooks for module in staged[0].modules())
+
+
+def test_installed_shared_dispatch_fixture_exact_resume_periodic_export(staged, tmp_path):
+    _, rows, config = staged
+    options = config.options
+    options['dummy'] = True
+    config_file = tmp_path / 'dispatch-config.json'
+    config_file.write_text(json.dumps(SessionConfig(product.NAME, product.COHORT, **options).as_dict()))
+    executable = str(Path(sys.executable).parent / 'particle-slider')
+    def command(operation, output, *extra):
+        result = subprocess.run([executable, operation, '--config', str(config_file), '--profile',
+            'zimage-fixture', '--out', str(output), '--checkpoint-every', '1',
+            '--export-format', 'both', '--selection', 'ema', '--no-reporting', *extra],
+            cwd=tmp_path, text=True, capture_output=True)
+        assert result.returncode == 0, result.stdout + result.stderr
+        return result
+    planned = json.loads(command('plan', tmp_path / 'plan').stdout)
+    assert planned['resolved']['profile']['status'] == 'fixture'
+    assert planned['resolved']['target_steps'] == 4
+    command('train', tmp_path / 'check', '--check')
+    command('train', tmp_path / 'first', '--stop-after', '2')
+    command('train', tmp_path / 'resumed', '--resume', str(tmp_path / 'first/artifacts/checkpoints/step-000002'))
+    command('train', tmp_path / 'full')
+    resumed = torch.load(tmp_path / 'resumed/artifacts/checkpoints/step-000004/training.pt', weights_only=True)
+    full = torch.load(tmp_path / 'full/artifacts/checkpoints/step-000004/training.pt', weights_only=True)
+    equal(resumed, full)
+    assert len(list((tmp_path / 'first/artifacts/checkpoints').iterdir())) == 2
+    assert len(list((tmp_path / 'resumed/artifacts/checkpoints').iterdir())) == 2
+    result = json.loads((tmp_path / 'resumed/artifacts/result.json').read_text())
+    assert result['completed_steps'] == 4 and result['rendered_images'] == 0
+    assert result['lr_search'] is False
+    assert (tmp_path / 'resumed/artifacts/adapter.pt').is_file()
+    artifact = tmp_path / 'resumed/artifacts/adapter-v2.pt'
+    Path(config.options['rows']).unlink()
+    request = dict(condition=rows[0]['neutral'], latent=rows[0]['latent'], timestep=rows[0]['timestep'])
+    with open_inference(artifact, options={'model_dir': config.options['model_dir']}, operation='response') as inference:
+        assert inference.selection == 'ema'
+        assert inference.response(**request, strength=.5).shape == (1, 4, 4, 4)
+    options['dummy'] = False
+    config_file.write_text(json.dumps(SessionConfig(product.NAME, product.COHORT, **options).as_dict()))
+    refused = subprocess.run([executable, 'train', '--config', str(config_file), '--profile',
+        'zimage-fixture', '--out', str(tmp_path / 'refused'), '--no-reporting'],
+        cwd=tmp_path, text=True, capture_output=True)
+    assert refused.returncode != 0
+    assert 'dummy' in refused.stdout + refused.stderr
+    assert not (tmp_path / 'refused').exists()

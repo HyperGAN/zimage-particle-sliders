@@ -5,7 +5,7 @@ by this preview. No model download, production sampler or media rendering runs.
 """
 from contextlib import contextmanager
 import hashlib
-from importlib.metadata import version
+from importlib.metadata import distribution, version
 import importlib
 import inspect
 import json
@@ -28,9 +28,9 @@ from particle_sliders.response import ResponseBackend, ResponseCapabilities
 from .graphs import GRAPH_SHA256, ZImageLoRA, targets
 
 NAME = 'embedded-zimage-shared'
-COHORT = 'embedded-zimage-adapter-gan-pg094-hg-hndl010-v4'
+COHORT = 'embedded-zimage-adapter-gan-pg094-hg-hndl010-v5'
 PROTOCOL = 'embedded-zimage-native-4d-raw-velocity-v2'
-CORE_COMMIT = 'a794e3b4a8813b012f2c4faa3da82b78d4a90214'
+CORE_COMMIT = 'ddb41423bcefc1fe76cd94d0f9b367353b3ea137'
 CORE_HASHES = {
     'pg09.py': '8d347665884fc371505e39819d6ee1081d893a8b2a8bbf8e5842b0d11f54c895',
     'lifecycle.py': 'ec27ef58ba544ddaf4f5e51ff48dd08d73686bf81df4e500d822500a297f2c29',
@@ -192,17 +192,33 @@ def _core_gate():
     if version('particle-sliders-core') != '0.12.0' or version('diffusers') != '0.42.1':
         raise ValueError('isolated core0.12/diffusers0.42.1 preview required')
     profile = json.loads(Path(__file__).with_name('source_profile.json').read_text())
-    actual = source_closure(root)
+    dependency = distribution('particle-sliders-core')
+    origin = json.loads(dependency.read_text('direct_url.json') or '{}')
+    if (origin.get('url') != profile['core_repository']
+            or origin.get('vcs_info', {}).get('commit_id') != CORE_COMMIT
+            or origin.get('subdirectory') != 'packages/particle-sliders-core'):
+        raise ValueError('shared core Git origin differs from the pinned cohort')
+    if root.resolve() != Path(dependency.locate_file('particle_sliders')).resolve():
+        raise ValueError('core lifecycle/source import is shadowed')
+    actual = {}
+    for package, package_root in (('particle_sliders', root),
+                                  ('concept_slider_core', Path(dependency.locate_file('concept_slider_core')))):
+        actual.update({package + '/' + name: digest for name, digest in source_closure(package_root).items()})
     if (profile.get('core_version') != version('particle-sliders-core')
-            or profile.get('core_closure') != 'recursive-source-data-sha256-v2'
+            or profile.get('core_closure') != 'recursive-distribution-source-data-sha256-v3'
             or profile['core_commit'] != CORE_COMMIT or actual != profile['core_sources']) or any(
-            actual.get(name) != digest for name,digest in CORE_HASHES.items()):
+            actual.get('particle_sliders/' + name) != digest for name,digest in CORE_HASHES.items()):
         raise ValueError('core lifecycle/source differs from the pinned CPU-tested candidate')
     for module_name,digest in profile['native_sources'].items():
         if hashlib.sha256(Path(importlib.import_module(module_name).__file__).read_bytes()).hexdigest() != digest:
             raise ValueError('native Diffusers source differs from the qualified CPU closure')
     if hashlib.sha256(Path(__file__).with_name('graphs.py').read_bytes()).hexdigest() != profile['product_graph_source_sha256']:
         raise ValueError('product HNDL graph source differs from the declared cohort')
+    from particle_sliders.pg094 import PG_SOURCE_PROFILE, PG_VERSION
+    from particle_sliders.pg09 import _released_sources
+    if (PG_VERSION, PG_SOURCE_PROFILE) != ('0.9.4', 'release-0.9.4'):
+        raise ValueError('official ParticleGAN 0.9.4 profile required')
+    _released_sources(profile=PG_SOURCE_PROFILE)
     verified_builder()
 
 
@@ -222,9 +238,11 @@ def capabilities(options):
 
 def validate(options):
     allowed = {'model_dir','model_identity','rows','rows_sha256','response_shape','steps','batch','seed','preset',
-               'ema_decay','base_precision','pg_version','pg_source_profile','penalty_input_domain'}
+               'ema_decay','base_precision','pg_version','pg_source_profile','penalty_input_domain','dummy'}
     if set(options) - allowed:
         raise ValueError('unknown embedded Z-Image preview option')
+    if 'dummy' in options and type(options['dummy']) is not bool:
+        raise ValueError('dummy must be an actual boolean fixture marker')
     _core_gate()
     shape = _shape(options.get('response_shape'))
     if options.get('base_precision', 'float32') != 'float32':

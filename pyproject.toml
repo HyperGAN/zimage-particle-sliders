@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "embedded-zimage-shared-preview"
-version = "0.1.3"
+version = "0.1.4"
 description = "Opt-in embedded Z-Image spatial response shared-game cohort"
 requires-python = ">=3.11,<3.15"
 readme = "README.md"
 dependencies = [
-  "particle-sliders-core[hypergan-hndl] @ git+https://github.com/HyperGAN/particle-sliders.git@a794e3b4a8813b012f2c4faa3da82b78d4a90214#subdirectory=packages/particle-sliders-core",
+  "particle-sliders-core[hypergan-hndl] @ git+https://github.com/HyperGAN/particle-sliders.git@ddb41423bcefc1fe76cd94d0f9b367353b3ea137#subdirectory=packages/particle-sliders-core",
   "diffusers==0.42.1",
   "safetensors==0.8.0",
 ]
@@ -22,6 +22,9 @@ embedded-zimage-shared = "embedded_zimage_shared.cli:main"
 
 [project.entry-points."particle_sliders.response_backends"]
 embedded-zimage-shared = "embedded_zimage_shared.backend:BACKEND"
+
+[project.entry-points."particle_sliders.training_profiles"]
+zimage-fixture = "embedded_zimage_shared.training_profile:fixture_profile"
 
 [project.entry-points."particle_sliders.inference_backends"]
 embedded-zimage-shared = "embedded_zimage_shared.backend:INFERENCE_BACKEND"
