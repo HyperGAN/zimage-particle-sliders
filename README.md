@@ -113,3 +113,7 @@ bounded native target names and numerical parity, not full historical discovery.
 
 No workflows, permission changes, releases, deployments, model weights, GPU jobs
 or merges are included in this draft.
+
+## Explicit CUDA source profile
+
+A separate FP32 deterministic/math CUDA backend is described in [NATIVE-CUDA.md](NATIVE-CUDA.md). It preserves the closed CPU cohort and raw/no-EMA defaults. Its hardware, pretrained quality and rate qualification remain pending; no GPU allocation or native media renderer is added by the CPU checks.
