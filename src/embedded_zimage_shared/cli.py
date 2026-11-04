@@ -22,11 +22,11 @@ def main(argv=None):
     train.add_argument('--batch', type=int, default=2)
     train.add_argument('--seed', type=int, default=7)
     train.add_argument('--preset', choices=['bispf','bispf_optimized'], default='bispf_optimized')
-    train.add_argument('--ema-decay', type=float, default=.9)
+    train.add_argument('--ema-decay', type=float, help='explicit nondefault EMA experiment')
     train.add_argument('--resume')
     train.add_argument('--checkpoint', required=True)
     train.add_argument('--export', required=True)
-    train.add_argument('--selection', choices=['raw','ema'], default='ema')
+    train.add_argument('--selection', choices=['raw','ema'], default='raw')
     response = commands.add_parser('response')
     response.add_argument('--model-dir', required=True)
     response.add_argument('--artifact', required=True)
@@ -35,6 +35,8 @@ def main(argv=None):
     response.add_argument('--output', required=True)
     args = parser.parse_args(argv)
     if args.command == 'train':
+        if args.selection == 'ema' and args.ema_decay is None:
+            parser.error('--selection ema requires an explicit --ema-decay experiment')
         config = SessionConfig(NAME, COHORT, model_dir=str(Path(args.model_dir).resolve()),
             model_identity=bundle_identity(args.model_dir), rows=str(Path(args.rows).resolve()),
             rows_sha256=file_sha256(args.rows),
