@@ -1,0 +1,19 @@
+{
+  "schema": "particle-slider-profile-v1",
+  "name": "zimage-particle-sliders-unavailable",
+  "product": "zimage-particle-sliders",
+  "config_kind": "native",
+  "status": "blocked",
+  "reason": "The checked-out default source is a review scaffold; the adapter-only PG draft implementation is not in this source tree.",
+  "runtime": {
+    "python": "python3"
+  },
+  "capabilities": {
+    "resume": false,
+    "periodic_checkpoint": false,
+    "check": false
+  },
+  "target_steps_path": "steps",
+  "evidence": "README.md",
+  "source_revision": "ef283784b4922381bcd7169a8f0368c20b78c347"
+}
