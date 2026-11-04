@@ -754,6 +754,7 @@ def test_installed_shared_dispatch_fixture_exact_resume_periodic_export(staged, 
     _, rows, config = staged
     options = config.options
     options['dummy'] = True
+    options.update(lr=.001,d_lr_mult=2.)
     config_file = tmp_path / 'dispatch-config.json'
     config_file.write_text(json.dumps(SessionConfig(product.NAME, product.COHORT, **options).as_dict()))
     executable = str(Path(sys.executable).parent / 'particle-slider')
@@ -774,6 +775,8 @@ def test_installed_shared_dispatch_fixture_exact_resume_periodic_export(staged, 
     resumed = torch.load(tmp_path / 'resumed/artifacts/checkpoints/step-000004/training.pt', weights_only=True)
     full = torch.load(tmp_path / 'full/artifacts/checkpoints/step-000004/training.pt', weights_only=True)
     equal(resumed, full)
+    assert resumed['payload']['game']['config']['recipe']['lr']==.001
+    assert resumed['payload']['game']['config']['recipe']['d_lr_mult']==2.
     assert len(list((tmp_path / 'first/artifacts/checkpoints').iterdir())) == 2
     assert len(list((tmp_path / 'resumed/artifacts/checkpoints').iterdir())) == 2
     result = json.loads((tmp_path / 'resumed/artifacts/result.json').read_text())

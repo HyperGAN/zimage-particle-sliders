@@ -1,5 +1,7 @@
 # Z-Image particle sliders
 
+Explicit LR controls and qualification scope: [LEARNING-RATES.md](LEARNING-RATES.md).
+
 This is the canonical repository for the opt-in Z-Image shared-game CPU preview.
 The active distribution is `embedded-zimage-shared-preview` version `0.1.4`, with
 import namespace `embedded_zimage_shared` and cohort
