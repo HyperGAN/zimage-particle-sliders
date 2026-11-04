@@ -26,6 +26,7 @@ from particle_sliders.pg09_backends import ResponseRow
 from particle_sliders.pg09_images import ImageResponseAdapter, image_condition_features
 from particle_sliders.response import ResponseBackend, ResponseCapabilities
 from .graphs import GRAPH_SHA256, ZImageLoRA, targets
+from .learning_rates import recipe_overrides
 
 NAME = 'embedded-zimage-shared'
 COHORT = 'embedded-zimage-adapter-gan-pg094-hg-hndl010-v5'
@@ -238,9 +239,11 @@ def capabilities(options):
 
 def validate(options):
     allowed = {'model_dir','model_identity','rows','rows_sha256','response_shape','steps','batch','seed','preset',
-               'ema_decay','base_precision','pg_version','pg_source_profile','penalty_input_domain','dummy'}
+               'ema_decay','base_precision','pg_version','pg_source_profile','penalty_input_domain','dummy',
+               'lr','d_lr_mult','prior_lr_mult'}
     if set(options) - allowed:
         raise ValueError('unknown embedded Z-Image preview option')
+    recipe_overrides(**{name:options.get(name) for name in ('lr','d_lr_mult','prior_lr_mult')})
     if 'dummy' in options and type(options['dummy']) is not bool:
         raise ValueError('dummy must be an actual boolean fixture marker')
     _core_gate()
@@ -371,6 +374,7 @@ def _observe(adapter):
 
 
 def prepare(options, *, model=None):
+    recipe_overrides(**{name:options.get(name) for name in ('lr','d_lr_mult','prior_lr_mult')})
     initialization = initialization_identity(options.get('seed', 7))
     with initialization_scope(initialization, 'preparation'):
         return _prepare(options, model=model, initialization=initialization)
@@ -386,7 +390,9 @@ def _prepare(options, *, model, initialization):
             critic = HNDLFieldCritic(options['response_shape'][1], features.shape[1], tuple(options['response_shape'][2:]))
         game = ConditionalPG094(adapter, rows, critic, conditions=features,
             preset=options.get('preset', 'bispf_optimized'), total_steps=options.get('steps',4),
-            batch_size=options.get('batch',2), seed=options.get('seed',7), response_domain='continuous_field')
+            batch_size=options.get('batch',2), seed=options.get('seed',7), response_domain='continuous_field',
+            recipe_overrides=recipe_overrides(**{name:options.get(name)
+                for name in ('lr','d_lr_mult','prior_lr_mult')}))
         configuration = dict(model_identity=options['model_identity'], response_shape=options['response_shape'],
             initialization=initialization)
         spec = INFERENCE_BACKEND.specification(adapter, model_identity=options['model_identity'],
