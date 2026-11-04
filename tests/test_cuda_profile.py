@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 from copy import deepcopy
 from types import SimpleNamespace
+from uuid import UUID as PhysicalUUID
 
 import pytest
 import torch
@@ -29,7 +30,7 @@ def test_policy_checks_caller_flags_and_physical_uuid_without_cuda_init(monkeypa
     options=strict_metadata(monkeypatch)
     result=e.execution_policy(options)
     assert result['device']=='cuda:0' and result['flags']==e.REQUIRED_FLAGS
-    assert 'physical_uuid' not in result  # Admission/audit UUID is not a portable weight key.
+    assert result['physical_uuid']==UUID
     monkeypatch.setattr(e,'numerical_flags',lambda:dict(e.REQUIRED_FLAGS,flash_sdp=True))
     with pytest.raises(ValueError,match='caller-set strict'):e.execution_policy(options)
 
@@ -69,14 +70,23 @@ def test_only_owned_visible_generator_is_forked_and_seeded(monkeypatch):
         with b.initialization_scope(identity,'unowned',policy):pass
 
 
-def test_admission_verifies_one_visible_device_and_actual_uuid(monkeypatch):
+@pytest.mark.parametrize('actual',[UUID,UUID.removeprefix('GPU-'),PhysicalUUID(UUID.removeprefix('GPU-'))])
+def test_admission_normalizes_real_torch_uuid_and_owned_physical_uuid(monkeypatch,actual):
     monkeypatch.setenv('CUDA_VISIBLE_DEVICES',UUID)
     monkeypatch.setattr(torch.cuda,'is_available',lambda:True)
     monkeypatch.setattr(torch.cuda,'device_count',lambda:1)
-    monkeypatch.setattr(torch.cuda,'get_device_properties',lambda index:SimpleNamespace(uuid=UUID))
-    b.admit_owned_device({'device':'cuda:0'})
-    monkeypatch.setattr(torch.cuda,'get_device_properties',lambda index:SimpleNamespace(uuid='GPU-aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'))
-    with pytest.raises(ValueError,match='physical CUDA UUID differs'):b.admit_owned_device({'device':'cuda:0'})
+    monkeypatch.setattr(torch.cuda,'get_device_properties',lambda index:SimpleNamespace(uuid=actual))
+    b.admit_owned_device({'device':'cuda:0','physical_uuid':UUID})
+
+
+@pytest.mark.parametrize('actual',[None,'not-a-uuid','aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'])
+def test_admission_refuses_invalid_missing_or_different_physical_uuid(monkeypatch,actual):
+    monkeypatch.setenv('CUDA_VISIBLE_DEVICES',UUID)
+    monkeypatch.setattr(torch.cuda,'is_available',lambda:True)
+    monkeypatch.setattr(torch.cuda,'device_count',lambda:1)
+    monkeypatch.setattr(torch.cuda,'get_device_properties',lambda index:SimpleNamespace(uuid=actual))
+    with pytest.raises(ValueError,match='physical CUDA UUID'):
+        b.admit_owned_device({'device':'cuda:0','physical_uuid':UUID})
 
 
 def test_explicit_cli_profile_configuration_does_not_initialize_cuda(monkeypatch):
@@ -84,6 +94,7 @@ def test_explicit_cli_profile_configuration_does_not_initialize_cuda(monkeypatch
     monkeypatch.setattr(torch.cuda,'is_initialized',lambda:False)
     monkeypatch.setattr(torch.cuda,'_lazy_init',lambda:pytest.fail('configuration initialized CUDA'))
     methods=[]
+    monkeypatch.setattr(torch,'set_float32_matmul_precision',lambda value:methods.append(('fp32_precision',value)))
     monkeypatch.setattr(torch,'use_deterministic_algorithms',lambda value:methods.append(('deterministic',value)))
     for name in ('enable_flash_sdp','enable_mem_efficient_sdp','enable_cudnn_sdp','enable_math_sdp'):
         monkeypatch.setattr(torch.backends.cuda,name,lambda value,name=name:methods.append((name,value)))
@@ -92,7 +103,7 @@ def test_explicit_cli_profile_configuration_does_not_initialize_cuda(monkeypatch
     try:e.configure_execution_profile()
     finally:
         torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32,torch.backends.cudnn.benchmark,torch.backends.cudnn.deterministic=old
-    assert methods==[('deterministic',True),('enable_flash_sdp',False),('enable_mem_efficient_sdp',False),('enable_cudnn_sdp',False),('enable_math_sdp',True)]
+    assert methods==[('fp32_precision','highest'),('deterministic',True),('enable_flash_sdp',False),('enable_mem_efficient_sdp',False),('enable_cudnn_sdp',False),('enable_math_sdp',True)]
 
 
 @pytest.fixture
@@ -261,3 +272,82 @@ def test_fresh_process_cpu_software_replay_under_different_hash_seeds(tmp_path):
         assert result.returncode==0,result.stdout+result.stderr
     receipt=json.loads((tmp_path/'cohort/result.json').read_text())
     assert all(receipt[k] for k in ('initial_exact','resume_exact','metrics_exact','cuda_uninitialized'))
+
+
+@pytest.mark.parametrize('change',[{'fp32_matmul_precision':'high'},
+    {'nvidia_tf32_override':'1'},{'torch_tf32_cublas_override':'1'}])
+def test_effective_fp32_precision_or_force_on_environment_refuses(monkeypatch,change):
+    options=strict_metadata(monkeypatch)
+    monkeypatch.setattr(e,'numerical_flags',lambda:dict(e.REQUIRED_FLAGS,**change))
+    with pytest.raises(ValueError,match='strict deterministic/math'):e.execution_policy(options)
+
+
+def test_numerical_flags_bind_actual_precision_and_environment(monkeypatch):
+    monkeypatch.setenv('NVIDIA_TF32_OVERRIDE','1');monkeypatch.setenv('TORCH_ALLOW_TF32_CUBLAS_OVERRIDE','1')
+    monkeypatch.setattr(torch,'get_float32_matmul_precision',lambda:'medium')
+    flags=e.numerical_flags()
+    assert flags['fp32_matmul_precision']=='medium'
+    assert flags['nvidia_tf32_override']=='1' and flags['torch_tf32_cublas_override']=='1'
+
+
+@pytest.mark.parametrize('name',['NVIDIA_TF32_OVERRIDE','TORCH_ALLOW_TF32_CUBLAS_OVERRIDE'])
+def test_explicit_configurator_refuses_force_on_environment_before_cuda(monkeypatch,name):
+    monkeypatch.setenv('CUDA_VISIBLE_DEVICES',UUID);monkeypatch.setenv('CUBLAS_WORKSPACE_CONFIG',':4096:8')
+    monkeypatch.setenv(name,'1')
+    monkeypatch.setattr(torch.cuda,'_lazy_init',lambda:pytest.fail('initialized CUDA for unsafe override'))
+    with pytest.raises(ValueError,match='environment overrides'):e.configure_execution_profile()
+
+
+def test_physical_uuid_is_bound_in_runtime_identity(monkeypatch):
+    options=strict_metadata(monkeypatch);first=e.execution_policy(options)
+    monkeypatch.setenv('CUDA_VISIBLE_DEVICES','GPU-aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee')
+    assert e.execution_policy(options)!=first
+
+
+@pytest.mark.parametrize('mutation',['root-forward','child-forward','compiled','backward','backward-pre','offload','old-forward'])
+def test_real_native_class_rejects_unowned_executable_modifications_before_attachment(cpu_software_cuda_path,mutation):
+    native,rows,config=cpu_software_cuda_path
+    child=next(m for m in native.modules() if m is not native)
+    handle=None
+    if mutation=='root-forward':native.forward=native.forward
+    elif mutation=='child-forward':child.forward=child.forward
+    elif mutation=='compiled':native._compiled_call_impl=lambda *a,**k:None
+    elif mutation=='backward':handle=native.register_full_backward_hook(lambda *a:None)
+    elif mutation=='backward-pre':handle=child.register_full_backward_pre_hook(lambda *a:None)
+    elif mutation=='offload':child._hf_hook=object()
+    elif mutation=='old-forward':child._old_forward=child.forward
+    policy=b.execution_policy(config.options);initialization=b.initialization_identity(7,policy)
+    before=[(m.training,[p.requires_grad for p in m.parameters(recurse=False)]) for m in native.modules()]
+    try:
+        with pytest.raises(ValueError,match='unowned|already has hooks'):
+            b._native(config.options,config.options['model_identity'],native,initialization=initialization)
+        assert before==[(m.training,[p.requires_grad for p in m.parameters(recurse=False)]) for m in native.modules()]
+        assert not any(m._forward_hooks for m in native.modules())
+    finally:
+        if handle is not None:handle.remove()
+
+
+def test_common_update_refuses_changed_policy_before_advancing(cpu_software_cuda_path,monkeypatch):
+    _,_,config=cpu_software_cuda_path
+    from particle_sliders.pg09 import _hash
+    with open_response(config) as session:
+        before=_hash(session.game.state_dict());current=b.execution_policy
+        monkeypatch.setattr(b,'execution_policy',lambda options:dict(current(options),changed_precision=True))
+        with pytest.raises(ValueError,match='execution policy changed'):session.step()
+        assert session.game.completed_steps==0 and _hash(session.game.state_dict())==before
+
+
+def test_observation_policy_checked_at_entry_and_after_native_restoration(cpu_software_cuda_path,monkeypatch):
+    native,_,config=cpu_software_cuda_path
+    policy=b.execution_policy(config.options);initialization=b.initialization_identity(7,policy)
+    adapter,close=b._native(config.options,config.options['model_identity'],native,initialization=initialization)
+    original=b.execution_policy
+    try:
+        with pytest.raises(ValueError,match='execution policy changed'):
+            with b.observe(adapter)():
+                native.train()
+                monkeypatch.setattr(b,'execution_policy',lambda options:dict(original(options),changed_precision=True))
+        assert not native.training
+        with pytest.raises(ValueError,match='execution policy changed'):
+            with b.observe(adapter)():pytest.fail('entered observation under changed profile')
+    finally:close()

@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from dataclasses import replace
 import json
 from pathlib import Path
+from uuid import UUID
 
 import torch
 from diffusers import ZImageTransformer2DModel
@@ -65,9 +66,15 @@ def admit_owned_device(policy):
         raise ValueError('CUDA profile requires exactly its one visible admitted GPU')
     properties = torch.cuda.get_device_properties(0)
     actual = getattr(properties, 'uuid', None)
-    if actual is not None and isinstance(actual, str):
-        if actual.removeprefix('GPU-').lower() != visible_uuid().removeprefix('GPU-').lower():
-            raise ValueError('visible physical CUDA UUID differs from execution identity')
+    try:
+        actual_uuid = UUID(str(actual).removeprefix('GPU-'))
+        expected_uuid = UUID(policy['physical_uuid'].removeprefix('GPU-'))
+        if expected_uuid != UUID(visible_uuid().removeprefix('GPU-')):
+            raise ValueError('visible physical CUDA UUID differs from bound execution identity')
+    except (ValueError, AttributeError, TypeError, KeyError) as exc:
+        raise ValueError('invalid physical CUDA UUID reported by admitted device') from exc
+    if actual_uuid != expected_uuid:
+        raise ValueError('visible physical CUDA UUID differs from execution identity')
 
 
 @contextmanager
@@ -136,6 +143,13 @@ def read_rows(options):
 def _model_gate(model, identity, policy):
     if type(model) is not ZImageTransformer2DModel:
         raise ValueError('borrowed native CUDA model type differs')
+    for module in model.modules():
+        if ('forward' in vars(module) or getattr(module,'_compiled_call_impl',None) is not None
+                or '_hf_hook' in vars(module) or '_old_forward' in vars(module)):
+            raise ValueError('native instance forward/compiled/offload modifications are unowned')
+        if (module._forward_hooks or module._forward_pre_hooks or module._backward_hooks
+                or module._backward_pre_hooks or module._is_full_backward_hook is not None):
+            raise ValueError('native model already has hooks; overlapping ownership refused')
     if any(str(p.device)!=policy['device'] or p.dtype!=torch.float32 for p in model.parameters()):
         raise ValueError('native model must already occupy the explicit CUDA FP32 device')
     if cpu.digest_state(model.state_dict())!=identity['state_sha256']:
@@ -148,8 +162,6 @@ def _model_gate(model, identity, policy):
         raise ValueError('borrowed CUDA model configuration differs')
     if model.is_gradient_checkpointing:
         raise ValueError('borrow an initially uncheckpointed native model; profile owns enablement/cleanup')
-    if any(m._forward_hooks or m._forward_pre_hooks for m in model.modules()):
-        raise ValueError('native model already has hooks; overlapping ownership refused')
     for module in model.modules():
         processor=getattr(module,'processor',None)
         if processor is not None and (type(processor) is not ZSingleStreamAttnProcessor
@@ -171,13 +183,30 @@ class CUDAResponseAdapter(ImageResponseAdapter):
         self.execution_options['gradient_checkpointing']=options.get('gradient_checkpointing',False)
         super().__init__('zimage',model,network,model_identity=identity)
 
-    def velocity(self,condition,latent,timestep,*,scale=1.):
+    def guard_policy(self):
         policy=execution_policy(self.execution_options)
         if bool(self.transformer.is_gradient_checkpointing)!=policy['gradient_checkpointing']:
             raise ValueError('native checkpoint mode differs from the CUDA execution profile')
         if policy!=self.model_identity['execution_policy']:
-            raise ValueError('CUDA execution policy changed before native forward')
+            raise ValueError('CUDA execution policy changed before native operation')
+
+    def velocity(self,condition,latent,timestep,*,scale=1.):
+        self.guard_policy()
         return super().velocity(condition,latent,timestep,scale=scale)
+
+
+def observe(adapter):
+    native_observe=cpu._observe(adapter)
+    @contextmanager
+    def context():
+        adapter.guard_policy()
+        try:
+            with native_observe():yield
+        except BaseException as primary:
+            _restore_all([adapter.guard_policy],primary=primary)
+            raise
+        else:adapter.guard_policy()
+    return context
 
 
 def _native(options, identity, model=None, *, initialization):
@@ -238,7 +267,7 @@ def prepare(options, *, model=None):
                 initialization=initialization,runtime_profile=CUDA_PROFILE,device='cuda:0',base_precision='float32',
                 gradient_checkpointing=policy['gradient_checkpointing'])
             spec=INFERENCE_BACKEND.specification(adapter,model_identity=options['model_identity'],protocol=PROTOCOL,configuration=configuration)
-            return Binding(game,close,inference=spec,observation=cpu._observe(adapter))
+            return Binding(game,close,inference=spec,before_update=lambda state:adapter.guard_policy(),observation=observe(adapter))
         except BaseException as primary:
             _restore_all([close],primary=primary);raise
 
@@ -273,7 +302,7 @@ def prepare_inference(options,spec):
                 cpu.check_request(condition,latent,timestep,config['response_shape'],config['model_identity'])
                 return adapter.velocity({k:v.to(policy['device']) for k,v in condition.items()},latent.to(policy['device']),timestep.to(policy['device']),scale=strength).detach().clone()
             return InferenceBinding(adapter.network,native_identity(adapter,model_identity=config['model_identity'],protocol=PROTOCOL),
-                close,response=response,observation=cpu._observe(adapter))
+                close,response=response,observation=observe(adapter))
         except BaseException as primary:
             _restore_all([close],primary=primary);raise
 
