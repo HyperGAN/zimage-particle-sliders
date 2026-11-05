@@ -586,7 +586,7 @@
     "diffusers.models.attention_processor": "59871fd4e66fc14a26f0e0464706ab24680e13dcd93161c55123678a5e671772",
     "diffusers.models.transformers.transformer_z_image": "ac552097cb1bbf7a6dd0f9b63718df110603edbe61af4fe2f1b699ceab23eeae"
   },
-  "pg_source_commit": "330eb94ee748cdcad131b0275d8de75fd5a7f96f",
+  "pg_source_commit": "1b8355b184b21bb7d81104ee590813c262f6df0a",
   "pg_source_profile": "release-0.9.5",
   "pg_version": "0.9.5",
   "product_graph_source_sha256": "4fc5854d996aae3faf8426f13fcd9cd05289122d1e23f38f30e90fabec6ec086"
