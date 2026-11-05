@@ -16,7 +16,7 @@ from particle_sliders.field_critic import seed_initialization_rng
 from particle_sliders.fibo_hndl import HNDLFieldCritic
 from particle_sliders.inference import InferenceBackend, InferenceBinding, native_identity
 from particle_sliders.lifecycle import Binding, native_cleanup, _restore_all
-from particle_sliders.pg094 import ConditionalPG094
+from particle_sliders.pg095 import ConditionalPG095
 from particle_sliders.pg09_backends import ResponseRow
 from particle_sliders.pg09_images import ImageResponseAdapter, image_condition_features
 from particle_sliders.response import ResponseBackend, ResponseCapabilities
@@ -26,7 +26,7 @@ from .graphs import ZImageLoRA, targets
 from .learning_rates import recipe_overrides
 
 NAME = 'embedded-zimage-cuda-fp32'
-COHORT = 'embedded-zimage-adapter-gan-pg094-hg-hndl010-cuda-v1'
+COHORT = 'embedded-zimage-adapter-gan-pg095-hg-hndl010-cuda-v1'
 PROTOCOL = 'embedded-zimage-native-4d-raw-velocity-cuda-v1'
 BACKEND_FILE = Path(__file__)
 file_sha256 = cpu.file_sha256
@@ -89,7 +89,7 @@ def initialization_scope(identity, component, policy):
 
 def capabilities(options):
     return ResponseCapabilities('adapter_gan', 'image', 'raw_flow_velocity', 'continuous_field',
-        cpu._shape(options.get('response_shape', [1,4,4,4])), '0.9.4', 'release-0.9.4',
+        cpu._shape(options.get('response_shape', [1,4,4,4])), '0.9.5', 'release-0.9.5',
         base_precisions=('float32',), qualification='separate CUDA FP32 execution profile; pretrained quality/resources unqualified')
 
 
@@ -260,7 +260,7 @@ def prepare(options, *, model=None):
             features=image_condition_features(rows)
             with initialization_scope(initialization,'critic',policy):
                 critic=HNDLFieldCritic(options['response_shape'][1],features.shape[1],tuple(options['response_shape'][2:])).to(policy['device'])
-            game=ConditionalPG094(adapter,rows,critic,conditions=features,preset=options.get('preset','bispf_optimized'),
+            game=ConditionalPG095(adapter,rows,critic,conditions=features,preset=options.get('preset','bispf_optimized'),
                 total_steps=options.get('steps',4),batch_size=options.get('batch',2),seed=options.get('seed',7),
                 response_domain='continuous_field',recipe_overrides=recipe_overrides(**{n:options.get(n) for n in ('lr','d_lr_mult','prior_lr_mult')}))
             configuration=dict(model_identity=options['model_identity'],response_shape=options['response_shape'],
