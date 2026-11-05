@@ -80,14 +80,18 @@ embedded-zimage-shared response --model-dir LOCAL_MODEL --artifact modern-raw.pt
 
 The dimensions above are a tiny-fixture example, not a production model card.
 Native requests contain only `condition={"embeds": tensor}`, `latent` and
-`timestep`. Strength 0 is the frozen base. Raw and EMA exports support numerical
+`timestep`. Strength 0 is the frozen base. RAW exports support numerical
 inference without training rows, critics or optimizers.
 
 ## Artifact and review boundaries
 
-New training uses the selected upstream ParticleGAN recipe with raw exports and
-no host EMA by default. `--ema-decay` and `--selection ema` are an explicit
-nondefault experiment; selecting EMA without its decay is rejected before loading.
+New training uses the selected upstream ParticleGAN recipe with RAW weights
+for training, evaluation, export and inference. Both CPU and CUDA CLIs leave
+`ema_decay=None` when `--ema-decay` is omitted, and default `--selection` to
+`raw`; keep those defaults. Do not maintain or compare EMA weights, add
+checkpoint averaging, or select EMA exports. Optional EMA flags remain only
+for compatibility with historical configurations and conformance coverage;
+they are not recommended for new ParticleGAN runs.
 
 Version 0.1.2/cohort v3 remains bound to core `7a8a321d04323d49319d0b08e6093a0ddce36b27`
 and its original source pin. Version 0.1.4/cohort v5 uses a new exact core/source identity and refuses
