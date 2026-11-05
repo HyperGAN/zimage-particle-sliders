@@ -589,7 +589,7 @@ def test_changed_initialization_policy_and_previous_cohort_refuse_without_relabe
         patch.setattr(product,'_native',lambda *args,**kwargs:pytest.fail('policy mismatch must precede attachment'))
         with pytest.raises(ValueError,match='initialization policy'):
             open_inference(bad,options={'model_dir':config.options['model_dir']},operation='response')
-        checkpoint['manifest']['config']['cohort']='embedded-zimage-adapter-gan-pg094-hg-hndl010-v2'
+        checkpoint['manifest']['config']['cohort']='embedded-zimage-adapter-gan-pg095-hg-hndl010-v2'
         checkpoint['sha256']=_hash({k:v for k,v in checkpoint.items() if k!='sha256'})
         torch.save(checkpoint,tmp_path/'previous-policy.pt')
         with pytest.raises(CheckpointError,match='config/cohort differs'):
@@ -713,7 +713,7 @@ def test_recursive_core_lock_covers_license_and_unexpected_nonpython_data(staged
 
 
 @pytest.mark.parametrize('old_pin', ['7a8a321d04323d49319d0b08e6093a0ddce36b27',
-    'a794e3b4a8813b012f2c4faa3da82b78d4a90214'])
+    'ddb41423bcefc1fe76cd94d0f9b367353b3ea137'])
 def test_previous_core_identity_refuses_before_native_attachment(staged, old_pin):
     native,rows,config=staged
     options=config.options;options['model_identity']['core_commit']=old_pin

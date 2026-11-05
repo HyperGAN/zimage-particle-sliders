@@ -21,7 +21,7 @@ from particle_sliders.fibo_hndl import HNDLFieldCritic, verified_builder
 from particle_sliders.field_critic import seed_initialization_rng
 from particle_sliders.inference import InferenceBackend, InferenceBinding, native_identity
 from particle_sliders.lifecycle import Binding, native_cleanup, _restore_all
-from particle_sliders.pg094 import ConditionalPG094
+from particle_sliders.pg095 import ConditionalPG095
 from particle_sliders.pg09_backends import ResponseRow
 from particle_sliders.pg09_images import ImageResponseAdapter, image_condition_features
 from particle_sliders.response import ResponseBackend, ResponseCapabilities
@@ -29,12 +29,12 @@ from .graphs import GRAPH_SHA256, ZImageLoRA, targets
 from .learning_rates import recipe_overrides
 
 NAME = 'embedded-zimage-shared'
-COHORT = 'embedded-zimage-adapter-gan-pg094-hg-hndl010-v5'
+COHORT = 'embedded-zimage-adapter-gan-pg095-hg-hndl010-v5'
 PROTOCOL = 'embedded-zimage-native-4d-raw-velocity-v2'
-CORE_COMMIT = 'ddb41423bcefc1fe76cd94d0f9b367353b3ea137'
+CORE_COMMIT = '3dd672a7f9b8c169daef90fd63e4bb42b9ddc423'
 CORE_HASHES = {
-    'pg09.py': '8d347665884fc371505e39819d6ee1081d893a8b2a8bbf8e5842b0d11f54c895',
-    'lifecycle.py': 'ec27ef58ba544ddaf4f5e51ff48dd08d73686bf81df4e500d822500a297f2c29',
+    'pg09.py': '96dcf51aa614539a3c9a8f169cf190e155d695b9df962cba058b37a65236a830',
+    'lifecycle.py': '00c867a24dcbf03192bbe23f0a14314e583c53138736626f656774a4b9b278ad',
     'inference.py': 'a44ad31b8976f5ad4519f658e4d5ab3c0ab875c4345696eba728835971be914a',
 }
 
@@ -190,8 +190,8 @@ def source_closure(root):
 def _core_gate():
     import particle_sliders
     root = Path(particle_sliders.__file__).parent
-    if version('particle-sliders-core') != '0.12.0' or version('diffusers') != '0.42.1':
-        raise ValueError('isolated core0.12/diffusers0.42.1 preview required')
+    if version('particle-sliders-core') != '0.13.0' or version('diffusers') != '0.42.1':
+        raise ValueError('isolated core0.13/diffusers0.42.1 preview required')
     profile = json.loads(Path(__file__).with_name('source_profile.json').read_text())
     dependency = distribution('particle-sliders-core')
     origin = json.loads(dependency.read_text('direct_url.json') or '{}')
@@ -215,10 +215,10 @@ def _core_gate():
             raise ValueError('native Diffusers source differs from the qualified CPU closure')
     if hashlib.sha256(Path(__file__).with_name('graphs.py').read_bytes()).hexdigest() != profile['product_graph_source_sha256']:
         raise ValueError('product HNDL graph source differs from the declared cohort')
-    from particle_sliders.pg094 import PG_SOURCE_PROFILE, PG_VERSION
+    from particle_sliders.pg095 import PG_SOURCE_PROFILE, PG_VERSION
     from particle_sliders.pg09 import _released_sources
-    if (PG_VERSION, PG_SOURCE_PROFILE) != ('0.9.4', 'release-0.9.4'):
-        raise ValueError('official ParticleGAN 0.9.4 profile required')
+    if (PG_VERSION, PG_SOURCE_PROFILE) != ('0.9.5', 'release-0.9.5'):
+        raise ValueError('official ParticleGAN 0.9.5 profile required')
     _released_sources(profile=PG_SOURCE_PROFILE)
     verified_builder()
 
@@ -233,7 +233,7 @@ def _shape(value):
 
 def capabilities(options):
     return ResponseCapabilities('adapter_gan', 'image', 'raw_flow_velocity', 'continuous_field',
-        _shape(options.get('response_shape', [1,4,4,4])), '0.9.4', 'release-0.9.4',
+        _shape(options.get('response_shape', [1,4,4,4])), '0.9.5', 'release-0.9.5',
         base_precisions=('float32',), qualification='tiny native API CPU fixtures only; pretrained/GPU unqualified')
 
 
@@ -388,7 +388,7 @@ def _prepare(options, *, model, initialization):
         features = image_condition_features(rows)
         with initialization_scope(initialization, 'critic'):
             critic = HNDLFieldCritic(options['response_shape'][1], features.shape[1], tuple(options['response_shape'][2:]))
-        game = ConditionalPG094(adapter, rows, critic, conditions=features,
+        game = ConditionalPG095(adapter, rows, critic, conditions=features,
             preset=options.get('preset', 'bispf_optimized'), total_steps=options.get('steps',4),
             batch_size=options.get('batch',2), seed=options.get('seed',7), response_domain='continuous_field',
             recipe_overrides=recipe_overrides(**{name:options.get(name)
