@@ -1,6 +1,16 @@
-> **Current source: core0.13.0 / published ParticleGAN0.9.5.** This is a fresh cohort; older versioned evidence below remains historical. See [adoption and compatibility](docs/pg095-adoption.md). No native PG0.9.5 result is claimed.
+> **Current source: core0.13.0 / published ParticleGAN0.9.5.** This is a fresh cohort; older versioned evidence below remains historical. See [adoption and compatibility](docs/pg095-adoption.md). No native PG0.9.5 result is claimed for this package's default cohort.
 
 # Z-Image particle sliders
+
+**Saved finished-output recommendation:** **G0.001**, selected from the
+four-case **RAW32** Golden Hour comparison (mean ON−OFF
+**0.0010827196141084035**). Use the existing selected RAW128 checkpoint at
+strength4 for the displayed sailboat preset; that later sampling diagnostic
+is **unscored** and does not replace the RAW32 LR result. See
+[scope and exact options](docs/finished-output-learning-rates.md) and
+[portable comparison](docs/finished-output-rate.json). Package defaults and
+original checkpoint/source identities are unchanged.
+
 
 Explicit LR controls and qualification scope: [LEARNING-RATES.md](LEARNING-RATES.md).
 

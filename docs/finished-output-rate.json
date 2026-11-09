@@ -1,0 +1,116 @@
+{
+  "schema": "particle-slider-scoped-finished-output-rate-guidance-v1",
+  "as_of": "2026-11-09",
+  "product_id": "zimage-particle-sliders",
+  "concept": "Golden Hour",
+  "selection_metric": "Equal-case arithmetic mean of intended-effect intensity ON minus exact matched OFF in finished images; higher wins.",
+  "comparison_policy": "Retain negative gains, native zeros and exact ties. Technical failures are missing evidence, not zero. No teacher-SSE, preservation, beauty, confidence or completion selector/tiebreak. Reuse completed searches, checkpoints, proofs, outputs and first scores; no additional fresh confirmation or worse-arm completion.",
+  "status": "best_tested_selected_from_existing_intended_effect_scores",
+  "common_rate_overrides": {
+    "lr": 0.001,
+    "d_lr_mult": 18.0,
+    "ema_decay": null
+  },
+  "product_option_fragment": {
+    "lr": 0.001,
+    "d_lr_mult": 18.0,
+    "ema_decay": null
+  },
+  "actual_rates": {
+    "G": 0.001,
+    "D": 0.018000000000000002,
+    "bank": null
+  },
+  "profile": {
+    "training_updates": 32,
+    "horizon": 128,
+    "batch": 2,
+    "rank": 16,
+    "render_resolution": 512,
+    "base_precision": "float32",
+    "VAE_precision": "float32",
+    "render_steps": 9,
+    "CFG": 0,
+    "particle_bank_shape": null
+  },
+  "primary": {
+    "training_updates": 32,
+    "cases": 4,
+    "mean_gain": 0.0010827196141084035,
+    "candidate_means": [
+      {
+        "control_id": "cell1",
+        "G": 0.001,
+        "mean_gain": 0.0010827196141084035
+      },
+      {
+        "control_id": "cell0",
+        "G": 0.0001,
+        "mean_gain": 0.00028538300345341366
+      },
+      {
+        "control_id": "cell2",
+        "G": 0.012,
+        "mean_gain": -0.001161337209244569
+      },
+      {
+        "control_id": "cell3",
+        "G": 0.036,
+        "mean_gain": -0.0038054579248030978
+      }
+    ],
+    "per_case_gains": {
+      "bridge-seed49001": 0.000720929354429245,
+      "bridge-seed49002": 0.002146342148383458,
+      "sailboat-seed49001": 0.0006160624325275421,
+      "sailboat-seed49002": 0.0008475445210933685
+    }
+  },
+  "weight_EMA": null,
+  "measurement_kind": "Frozen model instrument (SigLIP2), not human or statistical validation.",
+  "scope": "Golden Hour; four saved RAW32 arms/h128/native512/9steps/CFG0/FP32 base and VAE, b2/r16, two original neutral DEV prompts times two seeds. Use the best existing score; no additional fresh confirmation is required. Model-instrument fixed-D comparison, no global or joint optimum.",
+  "additional_fresh_confirmation_required": false,
+  "package_defaults_changed": false,
+  "selected_checkpoint_availability": "Private retained RAW checkpoint, not included in this repository or newly released by this documentation.",
+  "source_records": [
+    {
+      "role": "primary_result",
+      "name": "result.json",
+      "bytes": 80390,
+      "sha256": "b37f7965fb5d9815bd0b6a0b5fcc8650634dd5c5af686fee26d46290b14b0f2e",
+      "availability": "Retained campaign evidence; not bundled as a public artifact download."
+    },
+    {
+      "role": "primary_decision",
+      "name": "root-existing-four-arm-RAW32-selection-v1.json",
+      "bytes": 6222,
+      "sha256": "c95e8dcbf865d9f815628d21cde845a05f02ead9a8ae290d26296676da232720",
+      "availability": "Retained campaign evidence; not bundled as a public artifact download."
+    }
+  ],
+  "separate_sampling_followup": {
+    "initial_step": 32,
+    "completed_step": 128,
+    "new_updates": 96,
+    "original_horizon": 128,
+    "EMA": null,
+    "visible_strength": 4,
+    "scope": "One original sailboat seed49002/native512/9steps/CFG0/FP32 case, no new LR score",
+    "LR_score": null,
+    "RAW": {
+      "role": "RAW128_checkpoint",
+      "name": "zimage095-C1-native512-RAW128-h128.pt",
+      "bytes": 67370271,
+      "sha256": "e5a9623a66e718eedf707944f5f8d9d515a21d0b263a67fc0ee7768510a91066",
+      "availability": "Retained campaign evidence; not bundled as a public artifact download."
+    },
+    "publication": {
+      "role": "RAW128_sampling_publication",
+      "name": "actual-HTTP-publication-v1.json",
+      "bytes": 1597,
+      "sha256": "2b69fda325936c37d599b60cfe3b55398b90dd2777b4780731d0e4d25fc89256",
+      "availability": "Retained campaign evidence; not bundled as a public artifact download."
+    },
+    "repeat_completed_continuation": false
+  }
+}
