@@ -133,3 +133,11 @@ or merges are included in this draft.
 ## Explicit CUDA source profile
 
 A separate FP32 deterministic/math CUDA backend is described in [NATIVE-CUDA.md](NATIVE-CUDA.md). It preserves the closed CPU cohort and raw/no-EMA defaults. Its hardware, pretrained quality and rate qualification remain pending; no GPU allocation or native media renderer is added by the CPU checks.
+
+
+## Explicit cached fresh95 opt-in
+
+See [FRESH95.md](FRESH95.md) for the separate cached fresh/FULL/RAW library API,
+its original runtime and owning-distribution prerequisites, and the retained
+software qualification scope. Existing defaults, checkpoints and LR results
+keep their original routes.
