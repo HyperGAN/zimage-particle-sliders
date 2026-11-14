@@ -1,0 +1,419 @@
+{
+  "schema": "slider-memory-source-facts-v1",
+  "date": "2026-11-14",
+  "calculation_only": true,
+  "models_constructed": 0,
+  "framework_imports": 0,
+  "GPU_operations": 0,
+  "model": "Tongyi-MAI/Z-Image-Turbo",
+  "revision": "f332072aa78be7aecdf3ee76d5c247082da564a6",
+  "frozen_weights": [
+    {
+      "component": "staged native DiT",
+      "parameters": 6154908736,
+      "bytes": 24619634944
+    },
+    {
+      "component": "index tensor bytes; equals4P",
+      "bytes": 24619634944
+    }
+  ],
+  "parameter_derivation": "From the captured30 main+2 noise-refiner+2 context-refiner architecture, P=34×(4D²+3DI+4D+2h)+32×(256×4D+4D)+input/output/time/caption/pad terms = 6,154,908,736. The captured index total equals4P=24,619,634,944 bytes; equality alone does not prove every stored dtype. Resident bytes here follow the staged float32 dtype enforced by the chosen binding. No MLLM/TE/VAE is loaded by this response binding.",
+  "trainable": {
+    "parameters": 16811680,
+    "FP32_weights_bytes": 67246720,
+    "gradient_bytes": 67246720,
+    "persistent_momentum_or_Adam_tensor_bytes": 0,
+    "optimizer_transient_allowance_bytes": 840515072,
+    "optimizer_transient_formula": "48*A + 32MiB; FP32 protected normals/directions, FP64 promoted normals/displacements and small-matrix SVD/Gram workspace; conservative simultaneous allowance"
+  },
+  "trainable_derivation": "34 attention modules×4 projections×16×(3840+3840) +≤100,000 critic parameters = ≤16,811,680; ordinary LoRA, no particle bank",
+  "metadata": [
+    {
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "requested_revision": "main",
+      "resolved_revision": "f332072aa78be7aecdf3ee76d5c247082da564a6",
+      "repository_metadata_sha256": "600089a7827b95ecb4fed2d3e1ca042fc6690ee51a3655189e3a0aab04fa1340",
+      "weight_files": [
+        {
+          "path": "text_encoder/model-00001-of-00003.safetensors",
+          "size": 3957900840,
+          "lfs_sha256": "328a91d3122359d5547f9d79521205bc0a46e1f79a792dfe650e99fc2d651223"
+        },
+        {
+          "path": "text_encoder/model-00002-of-00003.safetensors",
+          "size": 3987450520,
+          "lfs_sha256": "6cd087b316306a68c562436b5492edbcf6e16c6dba3a1308279caa5a58e21ca5"
+        },
+        {
+          "path": "text_encoder/model-00003-of-00003.safetensors",
+          "size": 99630640,
+          "lfs_sha256": "7ca841ee75b9c61267c0c6148fd8d096d3d21b6d3e161256a9b878154f91fc52"
+        },
+        {
+          "path": "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+          "size": 9973693184,
+          "lfs_sha256": "95facd593e2549e8252acb571c653d57f7ddb7f1060d4e81712f152555a88804"
+        },
+        {
+          "path": "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+          "size": 9973714824,
+          "lfs_sha256": "a4bbe43ee184a1fb5af4b412d27555f532893bdc3165b1149e304ed82b5d7015"
+        },
+        {
+          "path": "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+          "size": 4672282880,
+          "lfs_sha256": "aba4e37a590e63210878160a718d916d80398f4e1f78ab6c9b2b2a00d92769fa"
+        },
+        {
+          "path": "vae/diffusion_pytorch_model.safetensors",
+          "size": 167666902,
+          "lfs_sha256": "f5b59a26851551b67ae1fe58d32e76486e1e812def4696a4bea97f16604d40a3"
+        }
+      ],
+      "configs": {
+        "transformer/config.json": {
+          "URL": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/resolve/f332072aa78be7aecdf3ee76d5c247082da564a6/transformer/config.json",
+          "bytes": 473,
+          "sha256": "06d49d1ae533f825c4704cc616fc8bc7826e9d449dde292cc7a95163c69af24a",
+          "value": {
+            "_class_name": "ZImageTransformer2DModel",
+            "_diffusers_version": "0.36.0.dev0",
+            "all_f_patch_size": [
+              1
+            ],
+            "all_patch_size": [
+              2
+            ],
+            "axes_dims": [
+              32,
+              48,
+              48
+            ],
+            "axes_lens": [
+              1536,
+              512,
+              512
+            ],
+            "cap_feat_dim": 2560,
+            "dim": 3840,
+            "in_channels": 16,
+            "n_heads": 30,
+            "n_kv_heads": 30,
+            "n_layers": 30,
+            "n_refiner_layers": 2,
+            "norm_eps": 1e-05,
+            "qk_norm": true,
+            "rope_theta": 256.0,
+            "t_scale": 1000.0
+          }
+        },
+        "vae/config.json": {
+          "URL": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/resolve/f332072aa78be7aecdf3ee76d5c247082da564a6/vae/config.json",
+          "bytes": 805,
+          "sha256": "e80af1e64a71883a9d10c3159d2e493e5934508da57852f6a180ae6ae63b14bd",
+          "value": {
+            "_class_name": "AutoencoderKL",
+            "_diffusers_version": "0.36.0.dev0",
+            "_name_or_path": "flux-dev",
+            "act_fn": "silu",
+            "block_out_channels": [
+              128,
+              256,
+              512,
+              512
+            ],
+            "down_block_types": [
+              "DownEncoderBlock2D",
+              "DownEncoderBlock2D",
+              "DownEncoderBlock2D",
+              "DownEncoderBlock2D"
+            ],
+            "force_upcast": true,
+            "in_channels": 3,
+            "latent_channels": 16,
+            "latents_mean": null,
+            "latents_std": null,
+            "layers_per_block": 2,
+            "mid_block_add_attention": true,
+            "norm_num_groups": 32,
+            "out_channels": 3,
+            "sample_size": 1024,
+            "scaling_factor": 0.3611,
+            "shift_factor": 0.1159,
+            "up_block_types": [
+              "UpDecoderBlock2D",
+              "UpDecoderBlock2D",
+              "UpDecoderBlock2D",
+              "UpDecoderBlock2D"
+            ],
+            "use_post_quant_conv": false,
+            "use_quant_conv": false
+          }
+        },
+        "text_encoder/config.json": {
+          "URL": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/resolve/f332072aa78be7aecdf3ee76d5c247082da564a6/text_encoder/config.json",
+          "bytes": 726,
+          "sha256": "8ba006f74fecfaaeb392872a60f4a480e7ec9860153d2e1b769ec81f9a147f8a",
+          "value": {
+            "architectures": [
+              "Qwen3ForCausalLM"
+            ],
+            "attention_bias": false,
+            "attention_dropout": 0.0,
+            "bos_token_id": 151643,
+            "eos_token_id": 151645,
+            "head_dim": 128,
+            "hidden_act": "silu",
+            "hidden_size": 2560,
+            "initializer_range": 0.02,
+            "intermediate_size": 9728,
+            "max_position_embeddings": 40960,
+            "max_window_layers": 36,
+            "model_type": "qwen3",
+            "num_attention_heads": 32,
+            "num_hidden_layers": 36,
+            "num_key_value_heads": 8,
+            "rms_norm_eps": 1e-06,
+            "rope_scaling": null,
+            "rope_theta": 1000000,
+            "sliding_window": null,
+            "tie_word_embeddings": true,
+            "torch_dtype": "bfloat16",
+            "transformers_version": "4.51.0",
+            "use_cache": true,
+            "use_sliding_window": false,
+            "vocab_size": 151936
+          }
+        }
+      },
+      "indexes": {
+        "transformer/diffusion_pytorch_model.safetensors.index.json": {
+          "URL": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/resolve/f332072aa78be7aecdf3ee76d5c247082da564a6/transformer/diffusion_pytorch_model.safetensors.index.json",
+          "bytes": 48969,
+          "sha256": "182a119d8018bfc61c9a62685a384af3b7d4a2f8aabbe766e07c9e1eda5b97ab",
+          "metadata": {
+            "total_size": 24619634944
+          }
+        },
+        "text_encoder/model.safetensors.index.json": {
+          "URL": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/resolve/f332072aa78be7aecdf3ee76d5c247082da564a6/text_encoder/model.safetensors.index.json",
+          "bytes": 32819,
+          "sha256": "6dc0981b8829fead746441f68f38f24c5ca4a3a66351f652c26c6df0efc43ab2",
+          "metadata": {
+            "total_size": 8044936192
+          }
+        }
+      }
+    }
+  ],
+  "source_citations": [
+    "src/embedded_zimage_shared/backend.py",
+    "src/embedded_zimage_shared/cuda_backend.py",
+    "src/embedded_zimage_shared/graphs.py",
+    "src/embedded_zimage_shared/execution.py",
+    "NATIVE-CUDA.md",
+    "tests/test_native_cohort.py"
+  ],
+  "profiles": [
+    {
+      "operation": "Train staged512px no checkpointing",
+      "gpu_count": 1,
+      "calculated_VRAM_per_GPU_GiB": 144,
+      "calculated_host_RAM_GiB": 64,
+      "geometry": "512×512",
+      "batch_graphs": 2,
+      "text_token_bound": 256,
+      "checkpointing": false,
+      "attention": "dense math fallback",
+      "resident_frozen_bytes": 24619634944,
+      "activation_allowance_bytes": 96259276800,
+      "trainable_and_optimizer_peak_bytes": 975008512,
+      "other_GPU_allowance_bytes": 0,
+      "GPU_subtotal_bytes": 121853920256,
+      "host_loading_and_cache_subtotal_bytes": 51386753536,
+      "runtime_headroom": "GPU: 25% subtotal +2GiB; host:25% subtotal +4GiB; final ceil4GiB",
+      "notes": "Actual native continuous velocity;≤32 CPU frozen rows. Conservative dense attention bound. One frame, no reference latents.",
+      "activation_envelope_inputs": {
+        "D": 3840,
+        "I": 10240,
+        "H": 30,
+        "L": 34,
+        "N": 1280,
+        "B": 2,
+        "scalar_bytes": 4,
+        "checkpointed": false,
+        "dense_fallback": true
+      },
+      "precision": "FP32 staged model/LoRA/critic",
+      "quantization_metadata_bytes": 0,
+      "activation_allowance_model": "Conservative planning envelope; linear transformer terms plus explicit dense fallback, text/KV or decode/pixel allowance as recorded in profile notes. Not measured or a formal peak guarantee."
+    },
+    {
+      "operation": "Train staged512px explicit checkpointing",
+      "gpu_count": 1,
+      "calculated_VRAM_per_GPU_GiB": 48,
+      "calculated_host_RAM_GiB": 64,
+      "geometry": "512×512",
+      "batch_graphs": 2,
+      "text_token_bound": 256,
+      "checkpointing": true,
+      "attention": "dense math fallback",
+      "resident_frozen_bytes": 24619634944,
+      "activation_allowance_bytes": 11010048000,
+      "trainable_and_optimizer_peak_bytes": 975008512,
+      "other_GPU_allowance_bytes": 0,
+      "GPU_subtotal_bytes": 36604691456,
+      "host_loading_and_cache_subtotal_bytes": 51386753536,
+      "runtime_headroom": "GPU: 25% subtotal +2GiB; host:25% subtotal +4GiB; final ceil4GiB",
+      "notes": "Actual native continuous velocity;≤32 CPU frozen rows. Conservative dense attention bound. One frame, no reference latents.",
+      "activation_envelope_inputs": {
+        "D": 3840,
+        "I": 10240,
+        "H": 30,
+        "L": 34,
+        "N": 1280,
+        "B": 2,
+        "scalar_bytes": 4,
+        "checkpointed": true,
+        "dense_fallback": true
+      },
+      "precision": "FP32 staged model/LoRA/critic",
+      "quantization_metadata_bytes": 0,
+      "activation_allowance_model": "Conservative planning envelope; linear transformer terms plus explicit dense fallback, text/KV or decode/pixel allowance as recorded in profile notes. Not measured or a formal peak guarantee."
+    },
+    {
+      "operation": "Sample RAW response512px",
+      "gpu_count": 1,
+      "calculated_VRAM_per_GPU_GiB": 32,
+      "calculated_host_RAM_GiB": 64,
+      "geometry": "512×512",
+      "batch_graphs": 1,
+      "text_token_bound": 256,
+      "checkpointing": false,
+      "attention": "dense math fallback",
+      "resident_frozen_bytes": 24619634944,
+      "activation_allowance_bytes": 1022361600,
+      "trainable_and_optimizer_peak_bytes": 67246720,
+      "other_GPU_allowance_bytes": 0,
+      "GPU_subtotal_bytes": 25709243264,
+      "host_loading_and_cache_subtotal_bytes": 51386753536,
+      "runtime_headroom": "GPU: 25% subtotal +2GiB; host:25% subtotal +4GiB; final ceil4GiB",
+      "notes": "One single-timestep native velocity response, not a finished image sampler.",
+      "activation_envelope_inputs": {
+        "D": 3840,
+        "I": 10240,
+        "H": 30,
+        "L": 34,
+        "N": 1280,
+        "B": 1,
+        "scalar_bytes": 4,
+        "checkpointed": false,
+        "dense_fallback": true
+      },
+      "precision": "FP32 staged model/LoRA/critic",
+      "quantization_metadata_bytes": 0,
+      "activation_allowance_model": "Conservative planning envelope; linear transformer terms plus explicit dense fallback, text/KV or decode/pixel allowance as recorded in profile notes. Not measured or a formal peak guarantee."
+    },
+    {
+      "operation": "CPU software fixture",
+      "gpu_count": 0,
+      "calculated_VRAM_per_GPU_GiB": 0,
+      "calculated_host_RAM_GiB": 8,
+      "geometry": "latent1×4×4×4;dim32",
+      "batch_graphs": 1,
+      "text_token_bound": 4,
+      "checkpointing": false,
+      "attention": "memory-efficient SDPA (flash/efficient; no dense fallback)",
+      "resident_frozen_bytes": 1377472,
+      "activation_allowance_bytes": 16777216,
+      "trainable_and_optimizer_peak_bytes": 35213880,
+      "other_GPU_allowance_bytes": 0,
+      "GPU_subtotal_bytes": 0,
+      "host_loading_and_cache_subtotal_bytes": 590239480,
+      "runtime_headroom": "GPU: 25% subtotal +2GiB; host:25% subtotal +4GiB; final ceil4GiB",
+      "notes": "Actual tested tiny-source shape: dim32,one main+one noise+one context block,caption dim16,rank16,batch2. The16MiB tensor allowance exceeds the symbolic fixture weights/graphs;rounded host headroom covers the interpreter/runtime.",
+      "activation_envelope_inputs": {
+        "D": 32,
+        "I": 85,
+        "H": 4,
+        "L": 3,
+        "N": 8,
+        "B": 1,
+        "scalar_bytes": 4,
+        "checkpointed": false,
+        "dense_fallback": false
+      },
+      "precision": "FP32 tiny CPU fixture",
+      "quantization_metadata_bytes": 0,
+      "activation_allowance_model": "Conservative planning envelope; linear transformer terms plus explicit dense fallback, text/KV or decode/pixel allowance as recorded in profile notes. Not measured or a formal peak guarantee.",
+      "fixture_parameter_allowance": {
+        "model_parameters": 344368,
+        "adapter_parameters": 12288,
+        "critic_parameters": 17345,
+        "notes": "Symbolic constructor upper allowance, not a constructed model count; older GQA code may own fewer KV weights."
+      }
+    }
+  ],
+  "repository": "zimage-particle-sliders",
+  "optimizer_source_facts": [
+    {
+      "version": "0.9.5",
+      "source_file": "recipes.py",
+      "bytes": 104250,
+      "sha256": "4f86c1a5c029916e73c834ebea4aae3bd5502dde8f10628e5a99a23f7e60242c"
+    },
+    {
+      "version": "0.9.5",
+      "source_file": "optim/dualnorm.py",
+      "bytes": 56768,
+      "sha256": "8e57be915dc8be44aaff2ac2f7ad39fbb2a7c610d77340e9f13e895974bf173c"
+    },
+    {
+      "version": "0.9.5",
+      "source_file": "optim/direction_blend.py",
+      "bytes": 4011,
+      "sha256": "84982277f0559e68aceea6d1c5ee60129c1e1972bebf61ca47dfa38b8611a1fb"
+    },
+    {
+      "version": "0.9.5",
+      "source_file": "optim/constraint_geometry.py",
+      "bytes": 9142,
+      "sha256": "e51a90df05857bd986ff097a6d266bd22cefa93a0d545a6fb25d58b42775ce4c"
+    }
+  ],
+  "KV_or_recurrent_state": {
+    "type": "preencoded conditions; no encoder/KV in product binding",
+    "bytes": 0
+  },
+  "external_constructor_count_source": {
+    "repository": "huggingface/diffusers",
+    "captured_revision_prefix": "43e300",
+    "file": "src/diffusers/models/transformers/transformer_z_image.py",
+    "bytes": 44465,
+    "sha256": "ac552097cb1bbf7a6dd0f9b63718df110603edbe61af4fe2f1b699ceab23eeae",
+    "scope": "symbolic count of shared30+2+2 geometry; index total equals4P, no claim that every serialized dtype is proven by equality"
+  },
+  "cache_limits": {
+    "max_rows": 32,
+    "max_cached_prompts": 32,
+    "field_shape": [
+      1,
+      16,
+      64,
+      64
+    ],
+    "FP32_fields_per_row": 3,
+    "prompt_hidden": [
+      1,
+      256,
+      2560
+    ],
+    "prompt_bytes_per_element": 4,
+    "max_condition_feature_width": 106,
+    "max_critic_width": 32,
+    "FP32_row_tensor_bytes": 25165824,
+    "prompt_embedding_bytes": 83886080,
+    "host_cache_formula": "max_rows*3*product(field_shape)*4 +max_cached_prompts*product(prompt_hidden)*prompt_bytes_per_element; native masks/indices included in loader/cache reserve"
+  }
+}
