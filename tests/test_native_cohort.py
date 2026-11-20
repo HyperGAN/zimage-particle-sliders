@@ -12,11 +12,11 @@ from torch import nn
 
 from embedded_zimage_shared import backend as product
 from embedded_zimage_shared.graphs import ZImageLoRA, targets
-from particle_sliders.fibo_hndl import HNDLFieldCritic
+from embedded_zimage_shared.fibo_hndl import HNDLFieldCritic
 from particle_sliders.field_critic import FieldCritic
 from particle_sliders.inference import open_inference
 from particle_sliders.lifecycle import CheckpointError, SessionConfig
-from particle_sliders.pg09 import _hash, validate_pg09_domain
+from particle_sliders.engine import _hash, validate_engine_domain
 from particle_sliders.response import open_response
 
 torch.set_num_threads(1)
@@ -51,7 +51,7 @@ def staged(tmp_path):
             negative={'embeds':torch.randn(2,16)},latent=torch.randn(1,4,4,4),timestep=torch.tensor(300.+i*100.)) for i in range(3)]
         torch.save(dict(schema=product.PROTOCOL,model_identity=identity,rows=rows),tmp_path/'rows.pt')
     config=SessionConfig(product.NAME,product.COHORT,model_dir=str(tmp_path/'model'),model_identity=identity,
-        rows=str(tmp_path/'rows.pt'),rows_sha256=product.file_sha256(tmp_path/'rows.pt'),response_shape=[1,4,4,4],steps=4,batch=2,seed=7,ema_decay=.8)
+        rows=str(tmp_path/'rows.pt'),rows_sha256=product.file_sha256(tmp_path/'rows.pt'),response_shape=[1,4,4,4],steps=4,batch=2,seed=7,ema_decay=None)
     return native,rows,config
 
 
@@ -111,7 +111,7 @@ def test_shared_hndl_critic_outputs_vjps_and_penalty_second_derivatives():
 
 
 @pytest.mark.parametrize('preset',['bispf','bispf_optimized'])
-def test_actual_shared_updates_exact_resume_ema_strength_and_native_only_inference(staged,tmp_path,preset):
+def test_actual_shared_updates_exact_resume_raw_strength_and_native_only_inference(staged,tmp_path,preset):
     native,rows,config=staged
     options=config.options; options['preset']=preset
     config=SessionConfig(product.NAME,product.COHORT,**options)
@@ -127,24 +127,25 @@ def test_actual_shared_updates_exact_resume_ema_strength_and_native_only_inferen
         assert outputs[0].shape==(1,4,4,4)
         assert not torch.equal(outputs[.5],outputs[1])
         assert not torch.equal(outputs[0],outputs[.5])
-        raw=full.export_inference(selection='raw');ema=full.export_inference(selection='ema')
+        raw=full.export_inference(selection='raw')
+        assert full.ema.decay is None and full.ema.values is None
+        with pytest.raises(ValueError, match='raw'):
+            full.export_inference(selection='ema')
     with open_response(config) as split:
         split.train(stop_after=2);split.checkpoint(tmp_path/'split.pt')
     with open_response(config,resume=tmp_path/'split.pt') as resumed:
         resumed.train();equal(expected,resumed.checkpoint())
     (tmp_path/'rows.pt').unlink()
     request=dict(condition=rows[0]['neutral'],latent=rows[0]['latent'],timestep=rows[0]['timestep'])
-    for packet in (raw,ema):
-        assert set(packet)=={'schema','specification','origin','selection','network','sha256'}
-        assert 'rows' not in packet['specification']['configuration']
-        with open_inference(packet,options={'model_dir':str(tmp_path/'model')},operation='response') as inference:
-            assert not hasattr(inference,'game')
-            for strength in (0,.5,1):
-                value=inference.response(**request,strength=strength)
-                if packet is raw: assert torch.equal(value,outputs[strength])
-                if strength==0: assert torch.equal(value,outputs[0])
-            with pytest.raises(Exception,match='cannot resume'): inference.step()
-    assert any(not torch.equal(raw['network'][k],ema['network'][k]) for k in raw['network'])
+    packet = raw
+    assert set(packet)=={'schema','specification','origin','selection','network','sha256'}
+    assert 'rows' not in packet['specification']['configuration']
+    with open_inference(packet,options={'model_dir':str(tmp_path/'model')},operation='response') as inference:
+        assert not hasattr(inference,'game')
+        for strength in (0,.5,1):
+            value=inference.response(**request,strength=strength)
+            assert torch.equal(value,outputs[strength])
+        with pytest.raises(Exception,match='cannot resume'): inference.step()
 
 
 def test_cli_default_uses_raw_weights_without_host_ema(staged, tmp_path):
@@ -163,7 +164,7 @@ def test_cli_default_uses_raw_weights_without_host_ema(staged, tmp_path):
         equal(packet['network'], session.game.network.state_dict())
 
 
-def test_cli_ema_selection_requires_explicit_experiment_before_loading(monkeypatch):
+def test_cli_ema_selection_rejects_before_loading(monkeypatch):
     from embedded_zimage_shared import cli
 
     def forbidden(*args, **kwargs):
@@ -186,7 +187,7 @@ def test_mismatch_rejects_before_native_mutation(staged,monkeypatch,changed):
     if changed=='model': options['model_identity']['state_sha256']='0'*64
     elif changed=='shape': options['response_shape']=[1,256]
     elif changed=='profile': options['penalty_input_domain']='continuous'
-    elif changed=='source': monkeypatch.setitem(product.CORE_HASHES,'pg09.py','0'*64)
+    elif changed=='source': monkeypatch.setitem(product.CORE_HASHES,'engine.py','0'*64)
     elif changed=='rows':
         rows[0]['positive']['embeds']=torch.randn(3,15)
         torch.save(dict(schema=product.PROTOCOL,model_identity=options['model_identity'],rows=rows),options['rows'])
@@ -204,13 +205,13 @@ def test_mismatch_rejects_before_native_mutation(staged,monkeypatch,changed):
 
 
 def test_builder_tamper_and_wide_vector_are_refused(staged,monkeypatch):
-    import particle_sliders.fibo_hndl as binding
+    import embedded_zimage_shared.fibo_hndl as binding
     native,rows,config=staged
     original=binding._sha
     monkeypatch.setattr(binding,'_sha',lambda p:'0'*64 if str(p).endswith('hndl_networks.py') else original(p))
     with pytest.raises(ValueError,match='builder closure'):product.BACKEND.open(config,model=native)
     assert not any(m._forward_hooks for m in native.modules())
-    with pytest.raises(ValueError,match='width >=170'):validate_pg09_domain((1,2048),response_domain='continuous_vector')
+    with pytest.raises(ValueError,match='width >=170'):validate_engine_domain((1,2048),response_domain='continuous_vector')
 
 
 def test_borrowed_modes_gradients_checkpoint_flags_and_nested_scales_restore(staged):
@@ -466,7 +467,7 @@ def test_training_paths_are_fixed_but_native_only_export_relocates(staged,tmp_pa
     _,rows,config=staged
     with open_response(config) as session:
         session.step();session.checkpoint(tmp_path/'resume.pt')
-        raw=session.export_inference(selection='raw');ema=session.export_inference(selection='ema')
+        raw=session.export_inference(selection='raw')
         expected=session.evaluate(strength=.5)
     moved_model=tmp_path/'relocated-model';moved_rows=tmp_path/'relocated-rows.pt'
     shutil.copytree(config.options['model_dir'],moved_model);shutil.copyfile(config.options['rows'],moved_rows)
@@ -478,12 +479,12 @@ def test_training_paths_are_fixed_but_native_only_export_relocates(staged,tmp_pa
             open_response(moved_config,resume=tmp_path/'resume.pt')
     shutil.rmtree(config.options['model_dir']);Path(config.options['rows']).unlink();moved_rows.unlink()
     request=dict(condition=rows[0]['neutral'],latent=rows[0]['latent'],timestep=rows[0]['timestep'])
-    for artifact in (raw,ema):
-        assert set(artifact['specification']['configuration'])=={'model_identity','response_shape','initialization'}
-        with open_inference(artifact,options={'model_dir':str(moved_model)},operation='response') as inference:
-            value=inference.response(**request,strength=.5)
-            if artifact is raw:assert torch.equal(value,expected)
-            assert value.shape==(1,4,4,4)
+    artifact = raw
+    assert set(artifact['specification']['configuration'])=={'model_identity','response_shape','initialization'}
+    with open_inference(artifact,options={'model_dir':str(moved_model)},operation='response') as inference:
+        value=inference.response(**request,strength=.5)
+        assert torch.equal(value,expected)
+        assert value.shape==(1,4,4,4)
 
 
 def test_equal_weights_reserialized_file_is_a_different_model_identity(staged):
@@ -589,7 +590,7 @@ def test_changed_initialization_policy_and_previous_cohort_refuse_without_relabe
         patch.setattr(product,'_native',lambda *args,**kwargs:pytest.fail('policy mismatch must precede attachment'))
         with pytest.raises(ValueError,match='initialization policy'):
             open_inference(bad,options={'model_dir':config.options['model_dir']},operation='response')
-        checkpoint['manifest']['config']['cohort']='embedded-zimage-adapter-gan-pg095-hg-hndl010-v2'
+        checkpoint['manifest']['config']['cohort']='embedded-zimage-adapter-gan-engine-hg-hndl010-v2'
         checkpoint['sha256']=_hash({k:v for k,v in checkpoint.items() if k!='sha256'})
         torch.save(checkpoint,tmp_path/'previous-policy.pt')
         with pytest.raises(CheckpointError,match='config/cohort differs'):
@@ -694,7 +695,10 @@ def test_observation_primary_error_survives_native_restore_failure(staged,monkey
             with pytest.raises(RuntimeError) as caught:session.evaluate()
         assert caught.value is marker
         assert any('native observation cleanup' in note for note in marker.__notes__)
-        equal(before,session.checkpoint());assert torch.equal(rng,torch.get_rng_state())
+        equal(before['payload']['game'], session.game.state_dict())
+        assert torch.equal(rng, torch.get_rng_state())
+        with pytest.raises(RuntimeError, match='requires cleanup'):
+            session.checkpoint()
 
 
 def test_recursive_core_lock_covers_license_and_unexpected_nonpython_data(staged,tmp_path,monkeypatch):
@@ -761,7 +765,7 @@ def test_installed_shared_dispatch_fixture_exact_resume_periodic_export(staged, 
     def command(operation, output, *extra):
         result = subprocess.run([executable, operation, '--config', str(config_file), '--profile',
             'zimage-fixture', '--out', str(output), '--checkpoint-every', '1',
-            '--export-format', 'both', '--selection', 'ema', '--no-reporting', *extra],
+            '--export-format', 'both', '--selection', 'raw', '--no-reporting', *extra],
             cwd=tmp_path, text=True, capture_output=True)
         assert result.returncode == 0, result.stdout + result.stderr
         return result
@@ -787,7 +791,7 @@ def test_installed_shared_dispatch_fixture_exact_resume_periodic_export(staged, 
     Path(config.options['rows']).unlink()
     request = dict(condition=rows[0]['neutral'], latent=rows[0]['latent'], timestep=rows[0]['timestep'])
     with open_inference(artifact, options={'model_dir': config.options['model_dir']}, operation='response') as inference:
-        assert inference.selection == 'ema'
+        assert inference.selection == 'raw'
         assert inference.response(**request, strength=.5).shape == (1, 4, 4, 4)
     options['dummy'] = False
     config_file.write_text(json.dumps(SessionConfig(product.NAME, product.COHORT, **options).as_dict()))

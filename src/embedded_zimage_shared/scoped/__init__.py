@@ -1,5 +1,5 @@
 """Explicit new cached fresh095 opt-in; original product routes stay unchanged."""
-PROFILE='zimage-explicit-cached-fresh95-v1'
+PROFILE='zimage-explicit-cached-scoped-v1'
 from .util import Checkpoint,file_pin
 
 def save_prepared_cache(*args,**kwargs):

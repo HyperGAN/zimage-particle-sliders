@@ -1,11 +1,11 @@
-# Explicit cached fresh95 opt-in
+# Explicit cached scoped opt-in
 
-`embedded_zimage_shared.fresh95` is a separate initialization profile. Existing
+`embedded_zimage_shared.scoped` is a separate initialization profile. Existing
 CPU/CUDA backends, defaults, learning rates and old FULL/RAW checkpoints keep
 their original routes. Do not migrate or reinitialize a completed cohort.
 
 Use an already compatible, genuinely installed `embedded-zimage-shared-preview`
-0.1.4 owner. The original core0.13.0 Git3dd672a7, recursive Source/PG0.9.5/HNDL
+0.1.4 owner. The core 0.15.1 at Git commit c13890f8, recursive Source/ParticleGAN 0.11.0/HNDL
 guards and Diffusers0.42.1 guards remain active. The installed wheel's generated
 RECORD must own both original files and this namespace; a Source prepend,
 editable checkout or handwritten RECORD does not replace that ownership. This
@@ -19,7 +19,7 @@ real completed-native data separate from synthetic software-only data. No
 pretrained model/cache availability is supplied or implied by this guide.
 
 The original rank16/alpha16 graph and Parameter objects are retained. The new
-scoped public PG0.9.5 initializer applies same-Parameter down QR at the original
+scoped public ParticleGAN 0.11.0 initializer applies same-Parameter down QR at the original
 Kaiming(a=1) variance1/fan_in. UP remains zero/KEEP, the original HNDLFieldCritic
 keeps its constructor values, and no particle bank is added. Initialization
 receipt/signature exists before optimizers. The game keeps response_scale1;
@@ -33,7 +33,7 @@ operation before added components. A fresh cohort and owner directory must be
 new. Rates/budget in `config` are explicit choices, not selected by this API.
 
 ```python
-from embedded_zimage_shared.fresh95 import (
+from embedded_zimage_shared.scoped import (
     save_prepared_cache, open_training, open_inference,
 )
 
@@ -69,7 +69,7 @@ with open_inference(
 
 Configuration explicitly chooses `cpu-native-fp32` or `cuda-native-fp32`, its
 original model bundle identity/response geometry, steps/batch/seed/preset/rates,
-`ema_decay=None`, PG0.9.5/release-0.9.5/continuous, device and checkpoint choice.
+`ema_decay=None`, ParticleGAN 0.11.0/release-0.11.0/continuous, device and checkpoint choice.
 The CPU lane stays CPU/no checkpoint enablement. The CUDA lane retains the
 original caller-configured math/physical ownership/checkpoint policy; this
 module does not set startup flags or admit GPUs. Capability strength remains
@@ -91,14 +91,14 @@ cohorts; no teacher collection, old search, test/proof or output is rerun here.
 
 ## Explicit installed-owner software check
 
-The retained four-case fixture is published as `tests/fresh95_owner_check.py`.
+The retained four-case fixture is published as `tests/scoped_owner_check.py`.
 That filename is outside pytest’s default `test_*.py` and `*_test.py` discovery,
 so ordinary repository CI keeps collecting its existing tests. The fixture body
 is unchanged from the retained installed-owner software observations. Publication
 routing adds no new software pass or native qualification.
 
 This check requires the genuine installed wheel’s generated RECORD to own both
-the original namespace and all seven fresh95 modules, with the frozen compatible
+the original namespace and all seven scoped modules, with the frozen compatible
 core, ParticleGAN and other runtime dependencies described above. An editable
 checkout or a Source-tree import is not that installed owner. For an explicitly
 requested owner check, use that compatible installed environment, an independent
@@ -109,7 +109,7 @@ cd /absolute/path/to/neutral-working-directory
 PYTHONPATH= PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
   /absolute/path/to/compatible-env/bin/python -m pytest \
   -q -c /dev/null \
-  /absolute/path/to/checkout/tests/fresh95_owner_check.py
+  /absolute/path/to/checkout/tests/scoped_owner_check.py
 ```
 
 The paths are caller-supplied. The explicit file argument selects these four

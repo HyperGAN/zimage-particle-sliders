@@ -26,11 +26,10 @@ def main(argv=None):
     train.add_argument('--lr', type=float, help='explicit base LR; omitted keeps official PG default')
     train.add_argument('--d-lr-mult', type=float, help='explicit critic/base multiplier')
     train.add_argument('--prior-lr-mult', type=float, help='unavailable: adapter-only model has no particle bank')
-    train.add_argument('--ema-decay', type=float, help='explicit nondefault EMA experiment')
     train.add_argument('--resume')
     train.add_argument('--checkpoint', required=True)
     train.add_argument('--export', required=True)
-    train.add_argument('--selection', choices=['raw','ema'], default='raw')
+    train.add_argument('--selection', choices=['raw'], default='raw')
     response = commands.add_parser('response')
     response.add_argument('--model-dir', required=True)
     response.add_argument('--artifact', required=True)
@@ -43,13 +42,11 @@ def main(argv=None):
             rates=recipe_overrides(lr=args.lr,d_lr_mult=args.d_lr_mult,prior_lr_mult=args.prior_lr_mult)
         except ValueError as exc:
             parser.error(str(exc))
-        if args.selection == 'ema' and args.ema_decay is None:
-            parser.error('--selection ema requires an explicit --ema-decay experiment')
         config = SessionConfig(NAME, COHORT, model_dir=str(Path(args.model_dir).resolve()),
             model_identity=bundle_identity(args.model_dir), rows=str(Path(args.rows).resolve()),
             rows_sha256=file_sha256(args.rows),
             response_shape=args.shape, steps=args.steps, batch=args.batch, seed=args.seed,
-            preset=args.preset, ema_decay=args.ema_decay, base_precision='float32', **rates)
+            preset=args.preset, ema_decay=None, base_precision='float32', **rates)
         with open_response(config, resume=args.resume) as session:
             metrics = session.train(stop_after=args.stop_after)
             session.checkpoint(args.checkpoint)

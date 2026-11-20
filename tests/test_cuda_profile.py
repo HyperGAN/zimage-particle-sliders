@@ -157,7 +157,7 @@ def test_new_factory_real_updates_exact_resume_and_raw_inference_without_data(cp
     with open_response(config) as split:split.train(stop_after=2);split.checkpoint(tmp_path/'split.pt')
     with open_response(config,resume=tmp_path/'split.pt') as replay:
         replay.train()
-        from particle_sliders.pg09 import _hash
+        from particle_sliders.engine import _hash
         assert _hash(expected)==_hash(replay.checkpoint())
     (tmp_path/'rows.pt').unlink()
     monkeypatch.setattr(b,'HNDLFieldCritic',lambda *args:pytest.fail('constructed training critic during inference'))
@@ -329,7 +329,7 @@ def test_real_native_class_rejects_unowned_executable_modifications_before_attac
 
 def test_common_update_refuses_changed_policy_before_advancing(cpu_software_cuda_path,monkeypatch):
     _,_,config=cpu_software_cuda_path
-    from particle_sliders.pg09 import _hash
+    from particle_sliders.engine import _hash
     with open_response(config) as session:
         before=_hash(session.game.state_dict());current=b.execution_policy
         monkeypatch.setattr(b,'execution_policy',lambda options:dict(current(options),changed_precision=True))

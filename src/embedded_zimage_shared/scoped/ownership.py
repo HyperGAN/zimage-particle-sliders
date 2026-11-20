@@ -12,9 +12,9 @@ def guard():
     root=Path(backend.__file__).absolute().parent
     for name,pin in ORIGINAL_SOURCES.items():
         if source_record(root/name)!=pin:raise RuntimeError('original ZImage Source differs:'+name)
-    backend._core_gate()  # Exact original core0.13 Git origin, closure, Diffusers, PG/HNDL guards.
-    if metadata.version('particlegan')!='0.9.5'or source_record(pg_init.__file__)['sha256']!=INIT_SHA:
-        raise RuntimeError('exact public PG095 initializer required')
+    backend._core_gate()  # Exact original core0.15 Git origin, closure, Diffusers, PG/HNDL guards.
+    if metadata.version('particlegan')!='0.11.0'or source_record(pg_init.__file__)['sha256']!=INIT_SHA:
+        raise RuntimeError('exact public ParticleGAN 0.11.0 initializer required')
     owners=[d for d in metadata.distributions()if(d.metadata.get('Name')or'').lower().replace('_','-')=='embedded-zimage-shared-preview']
     if len(owners)!=1 or owners[0].version!='0.1.4':raise RuntimeError('one genuine owning ZImage distribution required')
     owner=owners[0]
@@ -26,16 +26,17 @@ def guard():
         encoded=base64.urlsafe_b64encode(hashlib.sha256(raw).digest()).rstrip(b'=').decode()
         if records.get(relative)!=['sha256='+encoded,str(len(raw))]:
             raise RuntimeError('genuine original/new-profile RECORD differs:'+relative)
-    return dict(profile='original-ZImage-core013-direct-Git-closure-and-owning-RECORD',PG='0.9.5',core='0.13.0')
+    return dict(profile='original-ZImage-core-direct-Git-closure-and-owning-RECORD',PG='0.11.0',core='0.15.1')
 
 def sources():
     from embedded_zimage_shared import backend,cuda_backend,execution,graphs,learning_rates
-    from particle_sliders import pg09,pg095,pg09_backends,pg09_images,lifecycle,fibo_hndl
-    modules=(backend,cuda_backend,execution,graphs,learning_rates,pg09,pg095,pg09_backends,pg09_images,lifecycle,fibo_hndl)
+    from particle_sliders import engine,backends,lifecycle
+    from embedded_zimage_shared import image_bindings,fibo_hndl
+    modules=(backend,cuda_backend,execution,graphs,learning_rates,engine,backends,image_bindings,lifecycle,fibo_hndl)
     return dict(own={p.name:source_record(p)for p in sorted(Path(__file__).absolute().parent.glob('*.py'))},
         original={m.__name__:source_record(m.__file__)for m in modules})
 
-MARKER='_zimage_explicit_fresh95_attachment'
+MARKER='_zimage_explicit_scoped_attachment'
 
 class Attachment:
     """Own original LoRA hooks, native checkpoint attributes and frozen flags.

@@ -3,17 +3,17 @@ from contextlib import contextmanager
 from copy import deepcopy
 from pathlib import Path
 import hashlib,torch
-from particle_sliders.pg095 import ConditionalPG095
-from particle_sliders.pg09_images import ImageResponseAdapter
-from particle_sliders.fibo_hndl import HNDLFieldCritic
+from particle_sliders.engine import ConditionalParticleGAN
+from embedded_zimage_shared.image_bindings import ImageResponseAdapter
+from embedded_zimage_shared.fibo_hndl import HNDLFieldCritic
 from embedded_zimage_shared import backend as cpu,cuda_backend as gpu
 from embedded_zimage_shared.learning_rates import recipe_overrides
 from . import PROFILE,ownership,policy
 from .cache import load_cache,to_device
 from .util import canonical,equal,new_directory,read_packet,save_packet,write_json
 
-FULL_SCHEMA='ZImage-explicit-cached-fresh95-v1-FULL'
-RAW_SCHEMA='ZImage-explicit-cached-fresh95-v1-RAW'
+FULL_SCHEMA='ZImage-explicit-cached-scoped-v1-FULL'
+RAW_SCHEMA='ZImage-explicit-cached-scoped-v1-RAW'
 
 def configuration(value):
     if not isinstance(value,dict):raise ValueError('explicit new-profile configuration required')
@@ -23,7 +23,7 @@ def configuration(value):
     if set(value)-allowed or value.get('runtime')not in('cpu-native-fp32','cuda-native-fp32'):
         raise ValueError('explicit original CPU or CUDA lane; old entrypoints/configs are not migrated')
     if (value.get('ema_decay','missing')is not None or value.get('base_precision')!='float32'
-            or tuple(value.get(k)for k in('pg_version','pg_source_profile','penalty_input_domain'))!=('0.9.5','release-0.9.5','continuous')):
+            or tuple(value.get(k)for k in('pg_version','pg_source_profile','penalty_input_domain'))!=('0.11.0','release-0.11.0','continuous')):
         raise ValueError('explicit RAW/noEMA/native-FP32/current095 continuous recipe required')
     for key,low,high in(('steps',1,10000),('batch',2,512),('seed',0,2**63-101)):
         if type(value.get(key))is not int or not low<=value[key]<=high:raise ValueError('invalid '+key)
@@ -136,7 +136,7 @@ class Training(NativeOwner):
                     if mode=='fresh'else deepcopy(packet['initialization']))
                 self.backend=ReceiptBackend(self.native,self.initialization,self.sources,self.cache_identity,self.constructor)
                 # The scoped public PG receipt exists before the first optimizer.
-                self.game=ConditionalPG095(self.backend,to_device(prepared,self.config['device']),self.critic,
+                self.game=ConditionalParticleGAN(self.backend,to_device(prepared,self.config['device']),self.critic,
                     conditions=conditions.to(self.config['device']),particles=None,response_scale=1.0,
                     preset=self.config['preset'],total_steps=self.config['steps'],batch_size=self.config['batch'],seed=self.config['seed'],
                     response_domain='continuous_field',recipe_overrides=recipe_overrides(**{k:self.config.get(k)for k in('lr','d_lr_mult','prior_lr_mult')}))

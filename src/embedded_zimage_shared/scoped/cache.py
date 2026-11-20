@@ -2,12 +2,12 @@
 from dataclasses import fields
 from pathlib import Path
 import math,torch
-from particle_sliders.pg09_backends import PreparedResponse,ResponseRow
-from particle_sliders.pg09_images import image_condition_features
+from particle_sliders.backends import PreparedResponse,ResponseRow
+from embedded_zimage_shared.image_bindings import image_condition_features
 from . import PROFILE,ownership
 from .util import canonical,equal,read_packet,save_packet,source_record,tree
 
-SCHEMA='ZImage-completed-native-PreparedResponses-explicit-fresh95-v1'
+SCHEMA='ZImage-completed-native-PreparedResponses-explicit-scoped-v1'
 
 def file_record(value):
     if (not isinstance(value,dict)or set(value)!={'path','bytes','sha256'}
