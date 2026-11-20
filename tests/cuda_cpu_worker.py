@@ -10,7 +10,7 @@ import particle_sliders.lifecycle as lifecycle
 import particle_sliders.inference as inference
 from particle_sliders.lifecycle import SessionConfig
 from particle_sliders.response import open_response
-from particle_sliders.pg09 import _hash
+from particle_sliders.engine import _hash
 
 torch.set_num_threads(1)
 b.execution_policy=lambda options:dict(profile=e.CUDA_PROFILE,device='cpu',base_precision='float32',gradient_checkpointing=False,qualification='CPU software fixture only')

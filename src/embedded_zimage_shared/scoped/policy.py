@@ -1,4 +1,4 @@
-"""Public PG095 same-Parameter QR at original ZImage a=1 RMS; no bank."""
+"""Public ParticleGAN 0.11.0 same-Parameter QR at original ZImage a=1 RMS; no bank."""
 from dataclasses import dataclass
 from importlib import metadata
 import hashlib,math
@@ -10,7 +10,7 @@ from .util import canonical,source_record
 
 INIT_SHA='3534ff23efa413cdf8b4125b91e0d30671d873b3e2958547d4e744b750454b9b'
 SCHEMA='ZImage-explicit-host-a1-downQR-zeroUP-criticKEEP-initialization-v1'
-MARKER='_zimage_explicit_fresh95_receipt'
+MARKER='_zimage_explicit_scoped_receipt'
 
 @dataclass(frozen=True)
 class Construction:
@@ -36,7 +36,7 @@ def seed_for(seed,name):
 
 def declarations(adapter,critic):
     from embedded_zimage_shared.graphs import ZImageLoRA,Projection
-    from particle_sliders.fibo_hndl import HNDLFieldCritic
+    from embedded_zimage_shared.fibo_hndl import HNDLFieldCritic
     from hndl.operators.linear import Linear
     if type(adapter)is not ZImageLoRA or type(critic)is not HNDLFieldCritic or not adapter.projections:
         raise ValueError('exact original ZImage rank16/alpha16 HNDL adapter/critic required')
@@ -73,8 +73,8 @@ def initialize(slider,critic,construction,options,sources):
     if (not isinstance(construction,Construction)or construction.mode!='fresh'or not construction.cohort
             or construction.options_sha256!=hashlib.sha256(canonical(options).encode()).hexdigest()):
         raise ValueError('declared fresh construction before optimizers required')
-    if metadata.version('particlegan')!='0.9.5'or source_record(pg_init.__file__)['sha256']!=INIT_SHA:
-        raise ValueError('exact public PG095 initializer Source required')
+    if metadata.version('particlegan')!='0.11.0'or source_record(pg_init.__file__)['sha256']!=INIT_SHA:
+        raise ValueError('exact public ParticleGAN 0.11.0 initializer Source required')
     rows=declarations(slider,critic);before=[tensor_sha(x['parameter'])for x in rows]
     ids=[id(x['parameter'])for x in rows];holder=DeclaredOwned(rows)
     seeds={'p'+str(i):seed_for(options['config']['seed'],row['name'])for i,row in enumerate(rows)}

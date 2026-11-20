@@ -13,10 +13,7 @@ Use `cuda_backend.bundle_identity(model_dir, options=options)` and write a fresh
 The common `open_response(SessionConfig(...))` and native-only
 `open_inference(...)` APIs discover the new backend through separate entry
 points. The CUDA CLI accepts the same base/critic rate overrides as the CPU
-command. RAW export and `ema_decay=None` remain defaults. Leave `--ema-decay`
-unset and use `--selection raw`; do not maintain EMA weights, average
-checkpoints or compare/select EMA for new training. Optional EMA compatibility
-is historical. `prior_lr_mult` is refused because no bank exists.
+command. This profile exports RAW weights and uses `ema_decay=None`. `prior_lr_mult` is refused because no bank exists.
 
 Optional `gradient_checkpointing=True` is a different identity. The native model must start uncheckpointed; the profile owns enablement and binds the public shared scale-aware checkpoint hook before backward. Closure restores the borrowed checkpoint callbacks, enablement flags, module modes, requires-grad state and owned adapter hooks. Repeated retained-gradient/backward scale checks are covered by CPU native-block software tests; real CUDA replay still needs a separately admitted proof. Runtime numerical and checkpoint flags are rechecked before each native forward and update, and before/after observation. Borrowed instance forward replacements, compiled calls, backward hooks and offload wrappers are rejected before attachment.
 

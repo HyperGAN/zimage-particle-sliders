@@ -7,12 +7,12 @@ from copy import deepcopy
 import math
 import pytest,torch
 from diffusers import ZImageTransformer2DModel
-from particle_sliders.pg09_backends import PreparedResponse,ResponseRow,FrozenResponseAdapter
+from particle_sliders.backends import PreparedResponse,ResponseRow,FrozenResponseAdapter
 from particle_sliders.lifecycle import UnsupportedOperation
 from embedded_zimage_shared import backend as original,cuda_backend as original_cuda
-from embedded_zimage_shared.fresh95 import open_training,open_inference,save_prepared_cache,file_pin,Checkpoint
-from embedded_zimage_shared.fresh95 import api,cache,policy,ownership
-from embedded_zimage_shared.fresh95.util import equal
+from embedded_zimage_shared.scoped import open_training,open_inference,save_prepared_cache,file_pin,Checkpoint
+from embedded_zimage_shared.scoped import api,cache,policy,ownership
+from embedded_zimage_shared.scoped.util import equal
 
 def tiny_model():
     # Original native tiny constructor dimensions; no old test is imported/run.
@@ -45,7 +45,7 @@ def staged(tmp_path,monkeypatch):
             prepared.append(PreparedResponse(row,torch.full_like(latent,.1+.03*i),torch.zeros_like(latent)))
     config=dict(runtime='cpu-native-fp32',device='cpu',model_dir=str(tmp_path/'model'),model_identity=identity,
         response_shape=[1,4,4,4],steps=3,batch=2,seed=7,preset='bispf_optimized',ema_decay=None,
-        base_precision='float32',pg_version='0.9.5',pg_source_profile='release-0.9.5',
+        base_precision='float32',pg_version='0.11.0',pg_source_profile='release-0.11.0',
         penalty_input_domain='continuous',lr=.001,d_lr_mult=18.,gradient_checkpointing=False)
     original_output=tmp_path/'synthetic-completed-native-fields.pt'
     torch.save([cache.dump(item)for item in prepared],original_output)
@@ -56,7 +56,7 @@ def staged(tmp_path,monkeypatch):
     frozen=save_prepared_cache(tmp_path/'completed-cache.pt',config=config,prepared=prepared,
         teacher_origins=origins,cache_id='NEW-ZImage-three-completed-synthetic-fields',
         scope='synthetic-software-only',owner_admission=lambda request:True)
-    return dict(config=config,cache=frozen,cohort_id='NEW-ZImage-cached-fresh95-software-v1',
+    return dict(config=config,cache=frozen,cohort_id='NEW-ZImage-cached-scoped-software-v1',
         component_factory=component_factory,owner_admission=lambda request:True),tmp_path,state
 
 def opened(staged,name='fresh'):
@@ -64,7 +64,7 @@ def opened(staged,name='fresh'):
     return open_training(directory=root/name,mode='fresh',**options)
 
 def test_new_before_optimizer_same_HNDL_Parameters_zeroUP_critic_KEEP_no_bank(staged,monkeypatch):
-    initialize=policy.initialize;game=api.ConditionalPG095;seen=[]
+    initialize=policy.initialize;game=api.ConditionalParticleGAN;seen=[]
     def initialize_spy(adapter,critic,*args):
         ids=[id(p)for p in adapter.parameters()]+[id(p)for p in critic.parameters()]
         before=deepcopy(critic.state_dict());receipt=initialize(adapter,critic,*args)
@@ -76,7 +76,7 @@ def test_new_before_optimizer_same_HNDL_Parameters_zeroUP_critic_KEEP_no_bank(st
         assert seen and backend.metadata()['fresh_initialization']['receipt']==seen[-1]
         assert kwargs['particles']is None and kwargs['response_scale']==1.0
         return game(backend,*args,**kwargs)
-    monkeypatch.setattr(policy,'initialize',initialize_spy);monkeypatch.setattr(api,'ConditionalPG095',construct)
+    monkeypatch.setattr(policy,'initialize',initialize_spy);monkeypatch.setattr(api,'ConditionalParticleGAN',construct)
     with opened(staged)as owner:
         assert owner.game.completed_steps==0 and owner.game.prior is None
         assert owner.game.state_dict()['config']['backend']['fresh_initialization']['receipt']==seen[0]
@@ -118,7 +118,7 @@ def test_new_ONE_update_strict_whole_FULL_opts_RNG_and_RAW_native_skip(staged,mo
     monkeypatch.setattr(policy,'initialize',forbidden)
     with open_training(directory=root/'resume',mode='resume',resume=full,**options)as resumed:
         assert resumed.inherited_steps==1 and equal(state,resumed.game.state_dict())
-    monkeypatch.setattr(api,'load_cache',forbidden);monkeypatch.setattr(api,'ConditionalPG095',forbidden)
+    monkeypatch.setattr(api,'load_cache',forbidden);monkeypatch.setattr(api,'ConditionalParticleGAN',forbidden)
     with open_inference(raw,component_factory=component_factory,owner_admission=lambda request:True)as inferred:
         assert not hasattr(inferred,'game')and not hasattr(inferred,'critic')
         assert equal(network,inferred.network.state_dict())

@@ -11,7 +11,7 @@ import math
 
 import torch
 from torch import nn
-from particle_sliders.fibo_hndl import verified_builder
+from embedded_zimage_shared.fibo_hndl import verified_builder
 from particle_sliders.lifecycle import _restore_all
 from particle_sliders.native_lora import lora_target_plan
 
