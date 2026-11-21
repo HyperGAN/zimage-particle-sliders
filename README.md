@@ -160,3 +160,61 @@ compared with +0.00347 constant and +0.00117 late-heavy at nominal 0.5.
 The original 512-pixel BF16 CUDA CFG0 path used nine native Euler steps
 and its pinned FP32 VAE. All twelve images passed independent integrity.
 [Per-case evidence](docs/golden-hour-raw64-scheduled-strength.json)
+
+### Activation-gated strength
+
+Supply a fitted `LatentGatePlan` to the same renderer for a single native
+image trajectory. The gate reads the FP32 mean of each latent channel across
+the frame and spatial axes just before the transformer call. With CFG, it
+reads the conditional latent and retains the native joint forward and the
+same adapter strength on both copies. A fired gate applies the nominal
+strength for that Euler interval. The trace records each decision, the actual
+sigma grid, and `sigma_weighted_strength`, the sum of effective strengths
+weighted by their native interval widths.
+
+```python
+from embedded_zimage_shared.activation_gate import LatentGatePlan
+from embedded_zimage_shared.scheduled_render import render
+
+plan = LatentGatePlan(
+    core_wheel=verified_shared_core_wheel,
+    method="cfp",
+    direction=fitted_unit_direction,
+    parameter=fitted_threshold,
+    calibration_sha256=frozen_calibration_record_sha256,
+)
+output, trace = render(
+    pipeline,
+    scale_adapter=network.scaled,
+    gate_plan=plan,
+    strength=matched_nominal_strength,
+    num_inference_steps=native_step_count,
+    **inputs,
+)
+```
+
+Use `method="clabs"` with the fitted bias as `parameter`, a recorded `seed`,
+and the measured `CLABSParameters` fields in `clabs`. The matched random
+control takes a measured budget rate and seed as its `parameter` and `seed`,
+with no direction. For exact strength replay, use the same starting latent,
+conditioning and sampler with fixed gains derived from the traced
+`effective_strengths` divided by the nominal strength. The strict RAW loader,
+fixed-strength path, and existing fixed schedules keep their original
+dependencies and source identity. Build the companion wheel at the full
+shared revision in [core #269](https://github.com/HyperGAN/particle-sliders/pull/269)
+and pass its path to `core_wheel`. The renderer verifies and loads just its
+standalone steering module. [Shared equations and calibration protocol](https://github.com/HyperGAN/particle-sliders/blob/b1f780decc516808cfd3019d5e5b674457161f86/docs/strength-schedules.md#activation-dependent-steering)
+
+The Golden Hour RAW64 records contain final latents and finished images.
+A native adaptive comparison needs separate target and neutral pre-edit
+latent trajectories for fitting a direction and active renders on disjoint
+calibration cases for choosing the threshold or bias at a declared budget.
+Set the matched constant to the total sigma-weighted strength divided by
+the total native interval width, pooled over calibration renders. Freeze
+these settings before comparing the gate, constant and random control on
+held-out prompt–seed pairs. Use the RAW64 checkpoint's original source-bound
+runtime, 512-pixel BF16 CUDA CFG0 geometry, nine Euler intervals, and pinned
+FP32 VAE. Reuse the exact matched OFF for the equal-case mean Golden Hour
+intensity gain and run the separate catastrophic-output check. The archived
+four-case early-heavy result measures a fixed schedule. Its adaptive
+counterpart remains unmeasured.
