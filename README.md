@@ -144,3 +144,13 @@ software qualification scope. Existing defaults, checkpoints and LR results
 keep their original routes.
 
 Earlier qualification receipts and setup guides remain available in the [archived source](https://github.com/HyperGAN/zimage-particle-sliders/tree/45891e9fc0712051084db0771f76dcd72728e51d).
+
+## Scheduled strength on an owned native pipeline
+
+Call `embedded_zimage_shared.scheduled_render.render(pipeline,
+scale_adapter=network.scaled, step_gains=gains, num_inference_steps=len(gains),
+**inputs)` with the staged ZImage pipeline and its attached RAW adapter.
+The output uses the pipeline's normal latent or image return path.
+The trace records native timesteps and effective strengths. With the same
+unit gains at every step, this applies the nominal strength throughout.
+Pretrained scheduled effects are pending.
