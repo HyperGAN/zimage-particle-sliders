@@ -1,10 +1,9 @@
 include QUALIFICATION.md
 include EXTRACTION.md
-include provenance.json
 include LICENSE
-recursive-include docs/source *.md *.json
+recursive-include docs/source *.md
 include CORE-MIGRATION.md
-recursive-include docs/cohort-v4 *.md *.json
+recursive-include docs/cohort-v4 *.md
 
 include NATIVE-CUDA.md
 recursive-include tests *.py

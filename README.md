@@ -109,9 +109,8 @@ they are not recommended for new ParticleGAN runs.
 Version 0.1.2/cohort v3 remains bound to core `7a8a321d04323d49319d0b08e6093a0ddce36b27`
 and its original source pin. Version 0.1.4/cohort v5 uses a new exact core/source identity and refuses
 previous-cohort packets. Version 0.1.3/cohort v4 retains its original
-`a794e3b4a8813b012f2c4faa3da82b78d4a90214` pin and archived evidence
-in `docs/cohort-v4/`. No old packet is rewritten or
-relabeled. The native response/row protocol remains version 2; caches whose model
+`a794e3b4a8813b012f2c4faa3da82b78d4a90214` pin and [archived evidence](https://github.com/HyperGAN/zimage-particle-sliders/tree/45891e9fc0712051084db0771f76dcd72728e51d/docs/cohort-v4).
+The native response/row protocol remains version 2; caches whose model
 identity binds the old core must be regenerated explicitly for the new cohort.
 
 Training resume binds exact configuration, paths, source/runtime and step budget.
@@ -125,9 +124,10 @@ packet refusal is not claimed.
 `src/embedded_zimage_shared/source_profile.json` records the current core pin
 and recursive installed source closure. Earlier qualification stays in the
 archived migration records.
-`EXTRACTION.md` and `provenance.json` retain the source-export history.
-`docs/source/` contains immutable archival evidence with its original formatting;
-it is not the current installation guide. The LoRA module reference matches the
+[Source export history](EXTRACTION.md) links to the original extraction notes
+and provenance manifest.
+[Original source qualification](docs/source/QUALIFICATION.md) links to the
+archived results and reproduction instructions. The LoRA module reference matches the
 historical numerical module, while shared-network discovery differs. Tests cover
 bounded native target names and numerical parity, not full historical discovery.
 
