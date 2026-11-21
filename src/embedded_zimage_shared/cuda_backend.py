@@ -89,7 +89,7 @@ def initialization_scope(identity, component, policy):
 
 def capabilities(options):
     return ResponseCapabilities('adapter_gan', 'image', 'raw_flow_velocity', 'continuous_field',
-        cpu._shape(options.get('response_shape', [1,4,4,4])), '0.11.0', 'release-0.11.0',
+        cpu._shape(options.get('response_shape', [1,4,4,4])), '0.11.1', 'release-0.11.1',
         base_precisions=('float32',), qualification='separate CUDA FP32 execution profile; pretrained quality/resources unqualified')
 
 

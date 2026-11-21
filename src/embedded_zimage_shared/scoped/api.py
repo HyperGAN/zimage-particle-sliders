@@ -23,7 +23,7 @@ def configuration(value):
     if set(value)-allowed or value.get('runtime')not in('cpu-native-fp32','cuda-native-fp32'):
         raise ValueError('explicit original CPU or CUDA lane; old entrypoints/configs are not migrated')
     if (value.get('ema_decay','missing')is not None or value.get('base_precision')!='float32'
-            or tuple(value.get(k)for k in('pg_version','pg_source_profile','penalty_input_domain'))!=('0.11.0','release-0.11.0','continuous')):
+            or tuple(value.get(k)for k in('pg_version','pg_source_profile','penalty_input_domain'))!=('0.11.1','release-0.11.1','continuous')):
         raise ValueError('explicit RAW/noEMA/native-FP32/current095 continuous recipe required')
     for key,low,high in(('steps',1,10000),('batch',2,512),('seed',0,2**63-101)):
         if type(value.get(key))is not int or not low<=value[key]<=high:raise ValueError('invalid '+key)

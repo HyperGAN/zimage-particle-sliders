@@ -45,7 +45,7 @@ def staged(tmp_path,monkeypatch):
             prepared.append(PreparedResponse(row,torch.full_like(latent,.1+.03*i),torch.zeros_like(latent)))
     config=dict(runtime='cpu-native-fp32',device='cpu',model_dir=str(tmp_path/'model'),model_identity=identity,
         response_shape=[1,4,4,4],steps=3,batch=2,seed=7,preset='bispf_optimized',ema_decay=None,
-        base_precision='float32',pg_version='0.11.0',pg_source_profile='release-0.11.0',
+        base_precision='float32',pg_version='0.11.1',pg_source_profile='release-0.11.1',
         penalty_input_domain='continuous',lr=.001,d_lr_mult=18.,gradient_checkpointing=False)
     original_output=tmp_path/'synthetic-completed-native-fields.pt'
     torch.save([cache.dump(item)for item in prepared],original_output)

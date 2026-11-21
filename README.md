@@ -1,6 +1,6 @@
 > **Calculated memory planning:** training **144 GiB VRAM / 64 GiB host RAM** (512×512, B=2, FP32 staged model/LoRA/critic); single RAW response **32 GiB VRAM / 64 GiB host RAM** (512×512). See [MEMORY.md](MEMORY.md) for checkpointed/phase variants, attention fallback and exact limits. These are conservative calculated budgets, not measured peaks.
 
-> **Current source uses Particle Sliders core 0.15.1 and ParticleGAN 0.11.0.** Start a fresh cohort. Earlier software qualification and measured results retain their original pins.
+> **Current source uses Particle Sliders core 0.15.2 and ParticleGAN 0.11.1.** Start a fresh cohort. Earlier software qualification and measured results retain their original pins.
 
 # Z-Image particle sliders
 
@@ -22,7 +22,7 @@ import namespace `embedded_zimage_shared` and cohort
 `embedded-zimage-adapter-gan-engine-hg-hndl010-v5`.
 
 The active candidate pins shared core
-`c13890f8e2a1ecf1dc8eb9f2a37f9187cb9fea78`, including the merged shared
+`ec1161f5d74481be3540cb0dfa63d0e8f8b54e90`, including the merged shared
 plan and isolated execution APIs. This does not qualify a
 pretrained Z-Image model, GPU training, production resources, image quality or
 new response domains. This product is tested with tiny random native models on
@@ -41,7 +41,7 @@ python3.11 -m venv .venv
 ```
 
 The exact Git dependency and subdirectory are declared in `pyproject.toml`.
-The core pins official ParticleGAN 0.11.0. This product pins HyperGAN
+The core pins official ParticleGAN 0.11.1. This product pins HyperGAN
 `5f368a3770cf5bdae0448995c9f76e29af8049f7` and HNDL 0.10.0 directly, and owns
 the MIT-licensed image binding, HNDL graph sources and builder checks adapted
 from the pinned core source. The recursive lock covers every installed core source/data
@@ -142,3 +142,5 @@ See [SCOPED-INITIALIZATION.md](SCOPED-INITIALIZATION.md) for the separate cached
 its original runtime and owning-distribution prerequisites, and the retained
 software qualification scope. Existing defaults, checkpoints and LR results
 keep their original routes.
+
+Earlier qualification receipts and setup guides remain available in the [archived source](https://github.com/HyperGAN/zimage-particle-sliders/tree/45891e9fc0712051084db0771f76dcd72728e51d).
