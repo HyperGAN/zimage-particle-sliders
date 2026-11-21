@@ -153,4 +153,10 @@ scale_adapter=network.scaled, step_gains=gains, num_inference_steps=len(gains),
 The output uses the pipeline's normal latent or image return path.
 The trace records native timesteps and effective strengths. With the same
 unit gains at every step, this applies the nominal strength throughout.
-Pretrained scheduled effects are pending.
+
+Early-heavy strength improved all four matched cases of the archived
+Golden Hour RAW64 profile. Its mean finished-image gain was +0.00555,
+compared with +0.00347 constant and +0.00117 late-heavy at nominal 0.5.
+The original 512-pixel BF16 CUDA CFG0 path used nine native Euler steps
+and its pinned FP32 VAE. All twelve images passed independent integrity.
+[Per-case evidence](docs/golden-hour-raw64-scheduled-strength.json)

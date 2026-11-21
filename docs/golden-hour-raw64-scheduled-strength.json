@@ -1,0 +1,214 @@
+{
+  "profile": "Golden Hour RAW64 original BF16 CUDA Z-Image route",
+  "raw_sha256": "d431995663a143b8d9559e3ad747a7c57a0ff12af58a3073b70c99dbc55ffc91",
+  "matched_cases": 4,
+  "geometry": {
+    "width": 512,
+    "height": 512,
+    "steps": 9,
+    "cfg": 0
+  },
+  "decoder": "Original pinned FP32 VAE",
+  "nominal_strength": 0.5,
+  "actual_sigmas": [
+    1.0,
+    0.9600000381469727,
+    0.9130435585975647,
+    0.8571428060531616,
+    0.7894737124443054,
+    0.7058823704719543,
+    0.5999999642372131,
+    0.46153849363327026,
+    0.27272728085517883,
+    0.0
+  ],
+  "measure": "Equal-case finished-image Golden Hour intensity ON minus matched OFF",
+  "winning_arm": "early",
+  "arms": {
+    "constant": {
+      "mean_effect_gain": 0.0034717128922541938,
+      "integrity_passes": 4,
+      "effective_strengths": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "step_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "cases_better_than_constant": 0,
+      "cases": [
+        {
+          "case": "bridge-seed49001",
+          "seed": 49001,
+          "effect_gain": 0.001496446629365285,
+          "change_vs_constant": 0.0,
+          "on_sha256": "3870a95c1c8619b1ff63db5844304465742b006b65a5e1eedc5926ca31223eb3",
+          "off_sha256": "17446329411e3c46ffa773458cf98d4b21bc809544baa97750f415a3a4be9448"
+        },
+        {
+          "case": "bridge-seed49002",
+          "seed": 49002,
+          "effect_gain": 0.006279093523820242,
+          "change_vs_constant": 0.0,
+          "on_sha256": "214e6d526a9cf3b3a07e46feb6fbc6b44d932271a24bab67495dc37a042b2462",
+          "off_sha256": "6ce1f4eaf27204b8c7ff057f08044f3c5ec265b3f377cb964e3c433785f725a9"
+        },
+        {
+          "case": "sailboat-seed49001",
+          "seed": 49001,
+          "effect_gain": 0.0019022313257058459,
+          "change_vs_constant": 0.0,
+          "on_sha256": "cc887f3f2132c8b5697aedc1bc5cef53a76ab07090e93b3bc4d644cb9449b6c6",
+          "off_sha256": "e92905b98a0cf8bac9d156a7846fb9a142cb7baea57a92692bc50b51f0475ddb"
+        },
+        {
+          "case": "sailboat-seed49002",
+          "seed": 49002,
+          "effect_gain": 0.004209080090125402,
+          "change_vs_constant": 0.0,
+          "on_sha256": "2c0e8ecab3aa2cc7438283859e302c9e629397af34ef6db2735d978d7f600824",
+          "off_sha256": "a55c61b77827725a031799462eaf2dfb60804eb5ba6b51ecd647ec3b77717b3d"
+        }
+      ]
+    },
+    "early": {
+      "mean_effect_gain": 0.005547834560275078,
+      "integrity_passes": 4,
+      "effective_strengths": [
+        0.75,
+        0.75,
+        0.75,
+        0.75,
+        0.75,
+        0.75,
+        0.6111111589420224,
+        0.25,
+        0.25
+      ],
+      "step_gains": [
+        1.5,
+        1.5,
+        1.5,
+        1.5,
+        1.5,
+        1.5,
+        1.2222223178840448,
+        0.5,
+        0.5
+      ],
+      "cases_better_than_constant": 4,
+      "cases": [
+        {
+          "case": "bridge-seed49001",
+          "seed": 49001,
+          "effect_gain": 0.0029525309801101693,
+          "change_vs_constant": 0.0014560843507448844,
+          "on_sha256": "cbb7143ead63049da080a170a75fba7d3e16055585d7a23637b430a872af6b38",
+          "off_sha256": "17446329411e3c46ffa773458cf98d4b21bc809544baa97750f415a3a4be9448"
+        },
+        {
+          "case": "bridge-seed49002",
+          "seed": 49002,
+          "effect_gain": 0.007577728480100632,
+          "change_vs_constant": 0.0012986349562803898,
+          "on_sha256": "281467bee770302d0017d4ddc3d95ce2f9a67472b6476edd3fcedf94a94d15ed",
+          "off_sha256": "6ce1f4eaf27204b8c7ff057f08044f3c5ec265b3f377cb964e3c433785f725a9"
+        },
+        {
+          "case": "sailboat-seed49001",
+          "seed": 49001,
+          "effect_gain": 0.005492743104696274,
+          "change_vs_constant": 0.003590511778990428,
+          "on_sha256": "c750f444e9b4f941b88f63a7b1b154321708300171e4ccf876ea6e3007d68181",
+          "off_sha256": "e92905b98a0cf8bac9d156a7846fb9a142cb7baea57a92692bc50b51f0475ddb"
+        },
+        {
+          "case": "sailboat-seed49002",
+          "seed": 49002,
+          "effect_gain": 0.006168335676193237,
+          "change_vs_constant": 0.001959255586067835,
+          "on_sha256": "343ee000432a5f299650755609916630b558b3da63715ac6fce637294ecaf0ae",
+          "off_sha256": "a55c61b77827725a031799462eaf2dfb60804eb5ba6b51ecd647ec3b77717b3d"
+        }
+      ]
+    },
+    "late": {
+      "mean_effect_gain": 0.0011708267653981845,
+      "integrity_passes": 4,
+      "effective_strengths": [
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        0.25,
+        0.3888888410579776,
+        0.75,
+        0.75
+      ],
+      "step_gains": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.7777776821159552,
+        1.5,
+        1.5
+      ],
+      "cases_better_than_constant": 0,
+      "cases": [
+        {
+          "case": "bridge-seed49001",
+          "seed": 49001,
+          "effect_gain": -0.0014279435078303013,
+          "change_vs_constant": -0.0029243901371955863,
+          "on_sha256": "b93e14627d0e19d8ba7c09dbb7a132d4029651111921dd0e0e4ce2cf35813638",
+          "off_sha256": "17446329411e3c46ffa773458cf98d4b21bc809544baa97750f415a3a4be9448"
+        },
+        {
+          "case": "bridge-seed49002",
+          "seed": 49002,
+          "effect_gain": 0.003937677790721257,
+          "change_vs_constant": -0.0023414157330989846,
+          "on_sha256": "403ade4ced75f92dceeb825b8ec4b115657eb11e7799bc48d8becd84121aa96f",
+          "off_sha256": "6ce1f4eaf27204b8c7ff057f08044f3c5ec265b3f377cb964e3c433785f725a9"
+        },
+        {
+          "case": "sailboat-seed49001",
+          "seed": 49001,
+          "effect_gain": 0.00167651226123174,
+          "change_vs_constant": -0.00022571906447410583,
+          "on_sha256": "911cc0ed7fb85ddb074174e4e8db3860322787d689c56467162e1d5110fcbaab",
+          "off_sha256": "e92905b98a0cf8bac9d156a7846fb9a142cb7baea57a92692bc50b51f0475ddb"
+        },
+        {
+          "case": "sailboat-seed49002",
+          "seed": 49002,
+          "effect_gain": 0.0004970605174700422,
+          "change_vs_constant": -0.00371201957265536,
+          "on_sha256": "559ade4b31d6b885d881241139d4eed6c3b9b650794acf16186da56c84c75a84",
+          "off_sha256": "a55c61b77827725a031799462eaf2dfb60804eb5ba6b51ecd647ec3b77717b3d"
+        }
+      ]
+    }
+  },
+  "new_optimizer_updates": 0,
+  "ema_decay": null
+}
