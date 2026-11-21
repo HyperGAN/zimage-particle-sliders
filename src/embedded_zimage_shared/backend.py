@@ -32,7 +32,7 @@ NAME = 'embedded-zimage-shared'
 COHORT = 'embedded-zimage-adapter-gan-engine-hg-hndl010-v5'
 PROTOCOL = 'embedded-zimage-native-4d-raw-velocity-v2'
 CORE_COMMIT = 'ec1161f5d74481be3540cb0dfa63d0e8f8b54e90'
-CORE_HASHES = {'engine.py': '4ae51bf86e349728d5fed804709bcf78474615f557891d6c77017e19c4c7e806',
+CORE_HASHES = {'engine.py': '319653b84699d53a07af7cfff795b2887ba38029dd914aaf905a0ee094a594df',
  'lifecycle.py': 'e2b08a36b30eac08505d19b0d22e9aefd226b91893b3ddaf950d94cc8f6c1546',
  'inference.py': '5ba3cfa3df3a3afce0b7b4d9b011ffa2b8585b48b531c36c3122d7983231ddbe'}
 
