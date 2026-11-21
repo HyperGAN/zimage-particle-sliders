@@ -9,7 +9,7 @@ descriptions below retain their own source-cohort scope.
 
 
 Direct preparation and common session API/JSON configuration accept `lr`,
-`d_lr_mult`, and `prior_lr_mult`. Omitted overrides preserve ParticleGAN 0.9.4
+`d_lr_mult`, and `prior_lr_mult`. Omitted overrides preserve the archived ParticleGAN release
 base 0.012 and critic multiplier 1.5. Explicit base and critic values must be
 finite and positive. Any non-null prior multiplier is refused because Z-Image
 is adapter-only and has no trainable particle bank.

@@ -5,7 +5,7 @@ CPU/CUDA backends, defaults, learning rates and old FULL/RAW checkpoints keep
 their original routes. Do not migrate or reinitialize a completed cohort.
 
 Use an already compatible, genuinely installed `embedded-zimage-shared-preview`
-0.1.4 owner. The core 0.15.1 at Git commit c13890f8, recursive Source/ParticleGAN 0.11.0/HNDL
+0.1.4 owner. The core 0.15.2 at Git commit ec1161f5, recursive Source/ParticleGAN 0.11.1/HNDL
 guards and Diffusers0.42.1 guards remain active. The installed wheel's generated
 RECORD must own both original files and this namespace; a Source prepend,
 editable checkout or handwritten RECORD does not replace that ownership. This
@@ -19,7 +19,7 @@ real completed-native data separate from synthetic software-only data. No
 pretrained model/cache availability is supplied or implied by this guide.
 
 The original rank16/alpha16 graph and Parameter objects are retained. The new
-scoped public ParticleGAN 0.11.0 initializer applies same-Parameter down QR at the original
+scoped public ParticleGAN 0.11.1 initializer applies same-Parameter down QR at the original
 Kaiming(a=1) variance1/fan_in. UP remains zero/KEEP, the original HNDLFieldCritic
 keeps its constructor values, and no particle bank is added. Initialization
 receipt/signature exists before optimizers. The game keeps response_scale1;
@@ -69,7 +69,7 @@ with open_inference(
 
 Configuration explicitly chooses `cpu-native-fp32` or `cuda-native-fp32`, its
 original model bundle identity/response geometry, steps/batch/seed/preset/rates,
-`ema_decay=None`, ParticleGAN 0.11.0/release-0.11.0/continuous, device and checkpoint choice.
+`ema_decay=None`, ParticleGAN 0.11.1/release-0.11.1/continuous, device and checkpoint choice.
 The CPU lane stays CPU/no checkpoint enablement. The CUDA lane retains the
 original caller-configured math/physical ownership/checkpoint policy; this
 module does not set startup flags or admit GPUs. Capability strength remains

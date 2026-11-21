@@ -31,7 +31,7 @@ from .learning_rates import recipe_overrides
 NAME = 'embedded-zimage-shared'
 COHORT = 'embedded-zimage-adapter-gan-engine-hg-hndl010-v5'
 PROTOCOL = 'embedded-zimage-native-4d-raw-velocity-v2'
-CORE_COMMIT = 'c13890f8e2a1ecf1dc8eb9f2a37f9187cb9fea78'
+CORE_COMMIT = 'ec1161f5d74481be3540cb0dfa63d0e8f8b54e90'
 CORE_HASHES = {'engine.py': '4ae51bf86e349728d5fed804709bcf78474615f557891d6c77017e19c4c7e806',
  'lifecycle.py': 'e2b08a36b30eac08505d19b0d22e9aefd226b91893b3ddaf950d94cc8f6c1546',
  'inference.py': '5ba3cfa3df3a3afce0b7b4d9b011ffa2b8585b48b531c36c3122d7983231ddbe'}
@@ -188,7 +188,7 @@ def source_closure(root):
 def _core_gate():
     import particle_sliders
     root = Path(particle_sliders.__file__).parent
-    if version('particle-sliders-core') != '0.15.1' or version('diffusers') != '0.42.1':
+    if version('particle-sliders-core') != '0.15.2' or version('diffusers') != '0.42.1':
         raise ValueError('isolated core0.15/diffusers0.42.1 preview required')
     profile = json.loads(Path(__file__).with_name('source_profile.json').read_text())
     dependency = distribution('particle-sliders-core')
@@ -215,8 +215,8 @@ def _core_gate():
         raise ValueError('product HNDL graph source differs from the declared cohort')
     from particle_sliders.engine import PG_SOURCE_PROFILE, PG_VERSION
     from particle_sliders.engine import _released_sources
-    if (PG_VERSION, PG_SOURCE_PROFILE) != ('0.11.0', 'release-0.11.0'):
-        raise ValueError('official ParticleGAN 0.11.0 profile required')
+    if (PG_VERSION, PG_SOURCE_PROFILE) != ('0.11.1', 'release-0.11.1'):
+        raise ValueError('official ParticleGAN 0.11.1 profile required')
     _released_sources(profile=PG_SOURCE_PROFILE)
     verified_builder()
 
@@ -231,7 +231,7 @@ def _shape(value):
 
 def capabilities(options):
     return ResponseCapabilities('adapter_gan', 'image', 'raw_flow_velocity', 'continuous_field',
-        _shape(options.get('response_shape', [1,4,4,4])), '0.11.0', 'release-0.11.0',
+        _shape(options.get('response_shape', [1,4,4,4])), '0.11.1', 'release-0.11.1',
         base_precisions=('float32',), qualification='tiny native API CPU fixtures only; pretrained/GPU unqualified')
 
 
