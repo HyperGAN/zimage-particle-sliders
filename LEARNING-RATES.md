@@ -8,11 +8,11 @@ work; no additional fresh confirmation. The option/default and CPU integration
 descriptions below retain their own source-cohort scope.
 
 
-Direct preparation and common session API/JSON configuration accept `lr`,
-`d_lr_mult`, and `prior_lr_mult`. Omitted overrides preserve the archived ParticleGAN release
-base 0.012 and critic multiplier 1.5. Explicit base and critic values must be
-finite and positive. Any non-null prior multiplier is refused because Z-Image
-is adapter-only and has no trainable particle bank.
+Direct preparation and common session configuration accept `lr` and
+`d_lr_mult`. The default `bispf_optimized` preset from ParticleGAN 0.11.1
+uses a base rate of 0.012 and a critic multiplier of 1.5. Explicit values must
+be finite and positive. Z-Image trains adapters without a particle bank, so
+it rejects any non-null `prior_lr_mult`.
 
 The common CLI consumes the same JSON options; there is no second LR default.
 The product CLI additionally accepts `--lr` and `--d-lr-mult`, and refuses
