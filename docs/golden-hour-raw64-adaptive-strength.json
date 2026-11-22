@@ -649,5 +649,109 @@
     "integrity_sha256": "281fa1f7b408b073156766933cae727c2aa833f595a41573bb18873bf81d502b",
     "effect_sha256": "8514043a5ff62b750e3df1de4287c6c57898a2ec892ea215ff32dc16ed87a313",
     "final_receipt_sha256": "40915519a4315641771d3f9ff64f3f81a8dce65ec3a97094aad5a68097b44790"
+  },
+  "replay": {
+    "runtime_core_revision": "b1f780decc516808cfd3019d5e5b674457161f86",
+    "runtime_core_module_sha256": "5fc2a5256a935eca9cecc365d9ac62e5e94cdc375d2ab33c5dc26eb344241814",
+    "calibration_core_revision": "7b26e5b06f5db91e8d3f51a1602d4e459f0f6a22",
+    "nominal_strength": 0.5,
+    "height": 512,
+    "width": 512,
+    "num_inference_steps": 9,
+    "guidance_scale": 0,
+    "direction_fp32": [
+      0.10761590301990509,
+      -0.27845528721809387,
+      0.5825318098068237,
+      0.21454933285713196,
+      -0.023847147822380066,
+      -0.3243837356567383,
+      -0.22978724539279938,
+      0.13391701877117157,
+      -0.20066024363040924,
+      0.02612692303955555,
+      -0.27665987610816956,
+      0.03918136656284332,
+      -0.1904090940952301,
+      0.2865411639213562,
+      0.29358887672424316,
+      0.15936888754367828
+    ],
+    "methods": {
+      "cfp": {
+        "parameter": 0.1361644584685564,
+        "calibration_sha256": "f99d5741cbc1cc1adeee15451b22904032f29b606fe300459eb75c7eb51bb4c6"
+      },
+      "clabs": {
+        "parameter": -0.00848399580888648,
+        "calibration_sha256": "c6380eec6fb830349d2bdc5b1833bcae1ae43c713dc653bd63c425931a294fb9"
+      },
+      "random": {
+        "parameter": 0.5,
+        "calibration_sha256": "1d19e0ff517b6e6bd44ac72f97fada97ae307a56461a26668f86c544dfea2f64"
+      }
+    },
+    "cases": {
+      "bridge-seed49001": {
+        "render_seed": 49001,
+        "prompt": "A stone bridge crossing a narrow river, photograph.",
+        "conditioning_sha256": "558ed470045f72ee03e24f4db611e35ecdf97bdbfd7297189f34a9ba41713f4c",
+        "gate_seeds_decimal": {
+          "cfp": null,
+          "clabs": "9106915238949752923",
+          "random": "9106915238949752923"
+        },
+        "matched_constant_strength": {
+          "cfp": 0.3636363595724106,
+          "clabs": 0.29440562427043915,
+          "random": 0.15620125830173492
+        }
+      },
+      "bridge-seed49002": {
+        "render_seed": 49002,
+        "prompt": "A stone bridge crossing a narrow river, photograph.",
+        "conditioning_sha256": "558ed470045f72ee03e24f4db611e35ecdf97bdbfd7297189f34a9ba41713f4c",
+        "gate_seeds_decimal": {
+          "cfp": null,
+          "clabs": "14187431575835460419",
+          "random": "14187431575835460419"
+        },
+        "matched_constant_strength": {
+          "cfp": 0.20000001788139343,
+          "clabs": 0.26923075318336487,
+          "random": 0.4008915424346924
+        }
+      },
+      "sailboat-seed49001": {
+        "render_seed": 49001,
+        "prompt": "A white sailboat anchored in a calm harbor, photograph.",
+        "conditioning_sha256": "7d2b34661ab0e7dad0d9c16b21b728704b916309410e88eab6f43adf056917e4",
+        "gate_seeds_decimal": {
+          "cfp": null,
+          "clabs": "15335183400826002525",
+          "random": "15335183400826002525"
+        },
+        "matched_constant_strength": {
+          "cfp": 0.5,
+          "clabs": 0.5,
+          "random": 0.27837319672107697
+        }
+      },
+      "sailboat-seed49002": {
+        "render_seed": 49002,
+        "prompt": "A white sailboat anchored in a calm harbor, photograph.",
+        "conditioning_sha256": "7d2b34661ab0e7dad0d9c16b21b728704b916309410e88eab6f43adf056917e4",
+        "gate_seeds_decimal": {
+          "cfp": null,
+          "clabs": "12574663841346728511",
+          "random": "12574663841346728511"
+        },
+        "matched_constant_strength": {
+          "cfp": 0.5,
+          "clabs": 0.5,
+          "random": 0.12358057498931885
+        }
+      }
+    }
   }
 }

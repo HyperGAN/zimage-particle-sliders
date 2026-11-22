@@ -222,3 +222,73 @@ against its control. All 24 gate and control images passed independent
 integrity checks. The archived early-heavy fixed schedule had mean gain
 +0.00555 over OFF on the same cases and remains the measured preset.
 [Per-case adaptive results](docs/golden-hour-raw64-adaptive-strength.json).
+
+#### Replay the measured gate
+
+Use the saved RAW64 adapter, the recorded conditioning file and the original
+BF16 transformer and Euler scheduler. The evidence records the applied
+FP32 direction, calibration receipts, and separate render and gate seeds.
+Build the wheel for `runtime_core_revision` in the replay record. The
+calibration solver revision is recorded separately.
+
+```python
+from hashlib import file_digest
+import json
+from pathlib import Path
+
+import torch
+from safetensors.torch import load_file
+
+from embedded_zimage_shared.activation_gate import LatentGatePlan
+from embedded_zimage_shared.scheduled_render import render
+
+study = json.loads(Path("docs/golden-hour-raw64-adaptive-strength.json").read_text())
+replay = study["replay"]
+case_id = "bridge-seed49001"
+case = replay["cases"][case_id]
+method = "clabs"
+
+with Path(raw_checkpoint_path).open("rb") as handle:
+    assert file_digest(handle, "sha256").hexdigest() == study["RAW_sha256"]
+with Path(conditioning_path).open("rb") as handle:
+    assert file_digest(handle, "sha256").hexdigest() == case["conditioning_sha256"]
+
+seed = case["gate_seeds_decimal"][method]
+gate = LatentGatePlan(
+    core_wheel=core_wheel,
+    method=method,
+    direction=replay["direction_fp32"] if method != "random" else None,
+    seed=None if seed is None else int(seed),
+    clabs=study["clabs_feedback"] if method == "clabs" else None,
+    **replay["methods"][method],
+)
+device = torch.device("cuda:0")
+noise = pipeline.prepare_latents(
+    1, len(replay["direction_fp32"]), replay["height"], replay["width"],
+    torch.float32, device, torch.Generator(device=device).manual_seed(case["render_seed"]), None,
+)
+inputs = dict(
+    prompt=None, prompt_embeds=[load_file(conditioning_path)["embeds"].to(device)],
+    height=replay["height"], width=replay["width"], latents=noise.clone(),
+    num_inference_steps=replay["num_inference_steps"],
+    guidance_scale=replay["guidance_scale"], output_type="latent",
+)
+gated, trace = render(
+    pipeline, scale_adapter=scale_adapter, gate_plan=gate, strength=replay["nominal_strength"],
+    **inputs,
+)
+assert trace["sigmas"] == study["actual_sigmas"]
+expected = next(row for row in study["methods"][method]["cases"]
+                if row["case"] == case_id)
+assert trace["effective_strengths"] == expected["arms"]["adaptive"]["native_effective_strengths"]
+
+inputs["latents"] = noise.clone()
+constant, _ = render(
+    pipeline, scale_adapter=scale_adapter, strength=case["matched_constant_strength"][method],
+    **inputs,
+)
+assert pipeline.scheduler.sigmas.tolist() == study["actual_sigmas"]
+```
+
+Decode both final latents with the original FP32 VAE. The saved native
+traces reproduce 108 gate decisions and all 12 matched constant strengths.
