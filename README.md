@@ -205,16 +205,20 @@ shared revision in [core #269](https://github.com/HyperGAN/particle-sliders/pull
 and pass its path to `core_wheel`. The renderer verifies and loads just its
 standalone steering module. [Shared equations and calibration protocol](https://github.com/HyperGAN/particle-sliders/blob/b1f780decc516808cfd3019d5e5b674457161f86/docs/strength-schedules.md#activation-dependent-steering)
 
-The Golden Hour RAW64 records contain final latents and finished images.
-A native adaptive comparison needs separate target and neutral pre-edit
-latent trajectories for fitting a direction and active renders on disjoint
-calibration cases for choosing the threshold or bias at a declared budget.
-Set the matched constant to the total sigma-weighted strength divided by
-the total native interval width, pooled over calibration renders. Freeze
-these settings before comparing the gate, constant and random control on
-held-out prompt–seed pairs. Use the RAW64 checkpoint's original source-bound
-runtime, 512-pixel BF16 CUDA CFG0 geometry, nine Euler intervals, and pinned
-FP32 VAE. Reuse the exact matched OFF for the equal-case mean Golden Hour
-intensity gain and run the separate catastrophic-output check. The archived
-four-case early-heavy result measures a fixed schedule. Its adaptive
-counterpart remains unmeasured.
+Fit the direction on paired target and neutral pre-edit latent trajectories.
+Choose the threshold or bias on separate active calibration renders at the
+declared firing budget. On each held-out prompt and seed, divide the gate's
+actual sigma-weighted strength by the total native interval width to obtain
+that case's dose-matched constant. Compare the gate, constant and random
+control under the same checkpoint, seed, Euler grid and OFF reference.
+
+The Golden Hour RAW64 study used the original 512-pixel BF16 CUDA CFG0
+runtime, nine Euler intervals and pinned FP32 VAE. At the 50% calibration
+target, CFP fired on 19 of 36 intervals and CLABS on 17 of 36. On four
+held-out cases, CFP improved mean Golden Hour intensity by +0.00361 over OFF
+and +0.00232 over its same-dose constant. CLABS measured +0.00390 over OFF
+and +0.00234 over its same-dose constant. Each gate had two wins and two ties
+against its control. All 24 gate and control images passed independent
+integrity checks. The archived early-heavy fixed schedule had mean gain
++0.00555 over OFF on the same cases and remains the measured preset.
+[Per-case adaptive results](docs/golden-hour-raw64-adaptive-strength.json).
