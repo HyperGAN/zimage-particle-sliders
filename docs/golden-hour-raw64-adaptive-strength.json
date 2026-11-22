@@ -1,0 +1,653 @@
+{
+  "schema": "zimage-golden-hour-raw64-adaptive-heldout-v1",
+  "profile": "frozen four-case Golden Hour RAW64 BF16 512px CFG0 Euler9",
+  "weights": "raw",
+  "ema_decay": null,
+  "RAW_sha256": "d431995663a143b8d9559e3ad747a7c57a0ff12af58a3073b70c99dbc55ffc91",
+  "actual_sigmas": [
+    1.0,
+    0.9600000381469727,
+    0.9130435585975647,
+    0.8571428060531616,
+    0.7894737124443054,
+    0.7058823704719543,
+    0.5999999642372131,
+    0.46153849363327026,
+    0.27272728085517883,
+    0.0
+  ],
+  "shared_core": "7b26e5b06f5db91e8d3f51a1602d4e459f0f6a22",
+  "fit_sha256": "ec65221e020c26cdbb9d36523675ca2936580445f3306a78e05baa95dd98c4bd",
+  "native_live_calibration_trajectories": 60,
+  "calibration": {
+    "cfp": {
+      "parameter": 0.1361644584685564,
+      "target_rate": 0.5,
+      "usage": {
+        "fired": 19,
+        "eligible": 36
+      }
+    },
+    "clabs": {
+      "parameter": -0.00848399580888648,
+      "target_rate": 0.5,
+      "usage": {
+        "fired": 17,
+        "eligible": 36
+      }
+    }
+  },
+  "clabs_feedback": {
+    "epsilon": 1e-06,
+    "setpoint": 0.75,
+    "proportional_gain": 1.0,
+    "integral_gain": 0.2,
+    "beta": 0.2,
+    "mean": 0.08522918736303432,
+    "std": 0.16625990273700342
+  },
+  "metric": "Equal-weight held-out mean Golden Hour intensity ON minus exact matched OFF",
+  "methods": {
+    "cfp": {
+      "heldout_fired": 32,
+      "heldout_eligible": 36,
+      "gate_mean_ON_minus_OFF": 0.003605708790322145,
+      "equal_dose_constant_mean_ON_minus_OFF": 0.001290212074915568,
+      "gate_mean_vs_equal_dose_constant": 0.002315496715406577,
+      "wins": 2,
+      "ties": 2,
+      "cases": [
+        {
+          "case": "bridge-seed49001",
+          "seed": 49001,
+          "matched_sigma_weighted_strength": 0.3636363595724106,
+          "fired": 8,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.006570690621932347,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "0a3876968ec0785478f438f02c7f95b848a0ced22ec6aa81b61bbb2ed8b7170c",
+              "gain_vs_OFF": 0.0022294272979100542,
+              "integrity_sha256": "5833f99569ced0c57beaf74013d768257a7ae30b4971dd2bc55ef41839cd67a0",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.0
+              ]
+            },
+            "constant": {
+              "png_sha256": "b83604f85bf1139d8a0bf4b6672cd9ffc814307783ba0b0626cc70df1d08c2c7",
+              "gain_vs_OFF": -0.004341263324022293,
+              "integrity_sha256": "f5d3f52558369b25c7546442768cfb6f2fc1a575cdbf1c17a52fd36d09c4d15d",
+              "native_effective_strengths": [
+                0.3636363595724106,
+                0.3636363595724106,
+                0.3636363595724106,
+                0.3636363595724106,
+                0.3636363595724106,
+                0.3636363595724106,
+                0.3636363595724106,
+                0.3636363595724106,
+                0.3636363595724106
+              ]
+            },
+            "OFF": {
+              "png_sha256": "17446329411e3c46ffa773458cf98d4b21bc809544baa97750f415a3a4be9448",
+              "mean_margin": 0.006726065029700597
+            }
+          }
+        },
+        {
+          "case": "bridge-seed49002",
+          "seed": 49002,
+          "matched_sigma_weighted_strength": 0.20000001788139343,
+          "fired": 6,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.00269129623969396,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "2f2d7cd4dc1719942bf38dcc9353f99830e167982c99099516bea0847d13835a",
+              "gain_vs_OFF": 0.006082096447547277,
+              "integrity_sha256": "6c81364d2745ec411c0786abd187aca07c16ce4444a0ef22fe8ad0acc7cc8be2",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "constant": {
+              "png_sha256": "5e266cb4d12095d8f695d0a9fd7b628b899247abe2a109dc5e838b79cff50597",
+              "gain_vs_OFF": 0.0033908002078533173,
+              "integrity_sha256": "0bb566f151e42cdfc0d5a6daf7ce5e76de1ea6a653376461c6c43f85036e2980",
+              "native_effective_strengths": [
+                0.20000001788139343,
+                0.20000001788139343,
+                0.20000001788139343,
+                0.20000001788139343,
+                0.20000001788139343,
+                0.20000001788139343,
+                0.20000001788139343,
+                0.20000001788139343,
+                0.20000001788139343
+              ]
+            },
+            "OFF": {
+              "png_sha256": "6ce1f4eaf27204b8c7ff057f08044f3c5ec265b3f377cb964e3c433785f725a9",
+              "mean_margin": -0.00020730371276537576
+            }
+          }
+        },
+        {
+          "case": "sailboat-seed49001",
+          "seed": 49001,
+          "matched_sigma_weighted_strength": 0.5,
+          "fired": 9,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.0,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "cc887f3f2132c8b5697aedc1bc5cef53a76ab07090e93b3bc4d644cb9449b6c6",
+              "gain_vs_OFF": 0.0019022313257058459,
+              "integrity_sha256": "a240967f5e7a581c5b948d5c2176333478cab7b1ac4ce3368764efaff99abd51",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "constant": {
+              "png_sha256": "cc887f3f2132c8b5697aedc1bc5cef53a76ab07090e93b3bc4d644cb9449b6c6",
+              "gain_vs_OFF": 0.0019022313257058459,
+              "integrity_sha256": "a2eacb1cd573fcfc40e9364c4874e13b9ca0ea33d426af336c1827d599aaf42a",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "OFF": {
+              "png_sha256": "e92905b98a0cf8bac9d156a7846fb9a142cb7baea57a92692bc50b51f0475ddb",
+              "mean_margin": -0.004419976224501927
+            }
+          }
+        },
+        {
+          "case": "sailboat-seed49002",
+          "seed": 49002,
+          "matched_sigma_weighted_strength": 0.5,
+          "fired": 9,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.0,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "2c0e8ecab3aa2cc7438283859e302c9e629397af34ef6db2735d978d7f600824",
+              "gain_vs_OFF": 0.004209080090125402,
+              "integrity_sha256": "846401f9350807a67e65964ac95cc73358aba720d59f2c329f7e23d15c541f2f",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "constant": {
+              "png_sha256": "2c0e8ecab3aa2cc7438283859e302c9e629397af34ef6db2735d978d7f600824",
+              "gain_vs_OFF": 0.004209080090125402,
+              "integrity_sha256": "675394247e1a628ebdd9a5bd15a3ecbfabb47595806fb143f6945c8a737c7822",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "OFF": {
+              "png_sha256": "a55c61b77827725a031799462eaf2dfb60804eb5ba6b51ecd647ec3b77717b3d",
+              "mean_margin": -0.005519366512695949
+            }
+          }
+        }
+      ]
+    },
+    "clabs": {
+      "heldout_fired": 32,
+      "heldout_eligible": 36,
+      "gate_mean_ON_minus_OFF": 0.003897390328347683,
+      "equal_dose_constant_mean_ON_minus_OFF": 0.0015618788699309032,
+      "gate_mean_vs_equal_dose_constant": 0.0023355114584167795,
+      "wins": 2,
+      "ties": 2,
+      "cases": [
+        {
+          "case": "bridge-seed49001",
+          "seed": 49001,
+          "matched_sigma_weighted_strength": 0.29440562427043915,
+          "fired": 7,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.00616320346792539,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "8626237ff16d14c5be03eecaa13caa88a7b279c409d55d3b879a18ce0e33edbd",
+              "gain_vs_OFF": 0.0026037121812502546,
+              "integrity_sha256": "776252c757e3410ca6e2d9fe4e66f6a374879b41c410b91f0e9269ed7fe22288",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.0,
+                0.5,
+                0.0
+              ]
+            },
+            "constant": {
+              "png_sha256": "2dad146a492dd6df6d767b71ab1009bccff26627f7d24122d7b27f2b29d3fa06",
+              "gain_vs_OFF": -0.003559491286675135,
+              "integrity_sha256": "740785996f647886924cae2d1931d8dae421d5eaee2ff055f51eb4d95e253131",
+              "native_effective_strengths": [
+                0.29440562427043915,
+                0.29440562427043915,
+                0.29440562427043915,
+                0.29440562427043915,
+                0.29440562427043915,
+                0.29440562427043915,
+                0.29440562427043915,
+                0.29440562427043915,
+                0.29440562427043915
+              ]
+            },
+            "OFF": {
+              "png_sha256": "17446329411e3c46ffa773458cf98d4b21bc809544baa97750f415a3a4be9448",
+              "mean_margin": 0.006726065029700597
+            }
+          }
+        },
+        {
+          "case": "bridge-seed49002",
+          "seed": 49002,
+          "matched_sigma_weighted_strength": 0.26923075318336487,
+          "fired": 7,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.00317884236574173,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "6b9344634057a2025a27615bcac1ba400967c8f21761880332868f75627b882a",
+              "gain_vs_OFF": 0.00687453771630923,
+              "integrity_sha256": "5abf74c42747583c15058bc0555f3975e0eeec5c3b32b1aac09796e4ac45f33c",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.0,
+                0.0
+              ]
+            },
+            "constant": {
+              "png_sha256": "ea5fe988a3b934dab441eda9f4643ee701d4a6d4b845ae6266a3fae889204798",
+              "gain_vs_OFF": 0.0036956953505674997,
+              "integrity_sha256": "ca53abdeca4cc289e5606d0bfd18bfaedd2f05743c49e82587c5666300c83c4c",
+              "native_effective_strengths": [
+                0.26923075318336487,
+                0.26923075318336487,
+                0.26923075318336487,
+                0.26923075318336487,
+                0.26923075318336487,
+                0.26923075318336487,
+                0.26923075318336487,
+                0.26923075318336487,
+                0.26923075318336487
+              ]
+            },
+            "OFF": {
+              "png_sha256": "6ce1f4eaf27204b8c7ff057f08044f3c5ec265b3f377cb964e3c433785f725a9",
+              "mean_margin": -0.00020730371276537576
+            }
+          }
+        },
+        {
+          "case": "sailboat-seed49001",
+          "seed": 49001,
+          "matched_sigma_weighted_strength": 0.5,
+          "fired": 9,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.0,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "cc887f3f2132c8b5697aedc1bc5cef53a76ab07090e93b3bc4d644cb9449b6c6",
+              "gain_vs_OFF": 0.0019022313257058459,
+              "integrity_sha256": "6d2c01c8bf377d4729574be54ae9fea2f6b675256f00ea7816cbd053983315d2",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "constant": {
+              "png_sha256": "cc887f3f2132c8b5697aedc1bc5cef53a76ab07090e93b3bc4d644cb9449b6c6",
+              "gain_vs_OFF": 0.0019022313257058459,
+              "integrity_sha256": "5abbe1a3739c51c5f39aea97eeec0e1829b5c26d5f516410407c61374b851945",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "OFF": {
+              "png_sha256": "e92905b98a0cf8bac9d156a7846fb9a142cb7baea57a92692bc50b51f0475ddb",
+              "mean_margin": -0.004419976224501927
+            }
+          }
+        },
+        {
+          "case": "sailboat-seed49002",
+          "seed": 49002,
+          "matched_sigma_weighted_strength": 0.5,
+          "fired": 9,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.0,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "2c0e8ecab3aa2cc7438283859e302c9e629397af34ef6db2735d978d7f600824",
+              "gain_vs_OFF": 0.004209080090125402,
+              "integrity_sha256": "b82d35c073dde7fd53aaf233ab10137ede4ad450d69111a471c1484175580757",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "constant": {
+              "png_sha256": "2c0e8ecab3aa2cc7438283859e302c9e629397af34ef6db2735d978d7f600824",
+              "gain_vs_OFF": 0.004209080090125402,
+              "integrity_sha256": "942cc9b45baaac02cb104c94450cf48c89055701c91305c1120e39b4fc930786",
+              "native_effective_strengths": [
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "OFF": {
+              "png_sha256": "a55c61b77827725a031799462eaf2dfb60804eb5ba6b51ecd647ec3b77717b3d",
+              "mean_margin": -0.005519366512695949
+            }
+          }
+        }
+      ]
+    },
+    "random": {
+      "heldout_fired": 18,
+      "heldout_eligible": 36,
+      "gate_mean_ON_minus_OFF": 0.0018884173283974328,
+      "equal_dose_constant_mean_ON_minus_OFF": 0.0020847761382659278,
+      "gate_mean_vs_equal_dose_constant": -0.00019635880986849496,
+      "wins": 1,
+      "ties": 0,
+      "cases": [
+        {
+          "case": "bridge-seed49001",
+          "seed": 49001,
+          "matched_sigma_weighted_strength": 0.15620125830173492,
+          "fired": 3,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": -0.0008619191745917005,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "fdbd2a303b3d095afb2f48f223893167fee6e342edd23e9741241715afe3a14f",
+              "gain_vs_OFF": -0.0013170503079891205,
+              "integrity_sha256": "361de7cdce826caa62adb8e549e20a388ce703d2ef05b43341e66653995d549f",
+              "native_effective_strengths": [
+                0.5,
+                0.0,
+                0.0,
+                0.0,
+                0.5,
+                0.0,
+                0.0,
+                0.5,
+                0.0
+              ]
+            },
+            "constant": {
+              "png_sha256": "10a946bb3577e3d447ea0b90b7d4ed154eba98a26d921ce9513237978dba8996",
+              "gain_vs_OFF": -0.00045513113339741996,
+              "integrity_sha256": "aa046950fa96f1a5a21dc53a0e415651e5ca264312599a8a97efa2693e4fe416",
+              "native_effective_strengths": [
+                0.15620125830173492,
+                0.15620125830173492,
+                0.15620125830173492,
+                0.15620125830173492,
+                0.15620125830173492,
+                0.15620125830173492,
+                0.15620125830173492,
+                0.15620125830173492,
+                0.15620125830173492
+              ]
+            },
+            "OFF": {
+              "png_sha256": "17446329411e3c46ffa773458cf98d4b21bc809544baa97750f415a3a4be9448",
+              "mean_margin": 0.006726065029700597
+            }
+          }
+        },
+        {
+          "case": "bridge-seed49002",
+          "seed": 49002,
+          "matched_sigma_weighted_strength": 0.4008915424346924,
+          "fired": 6,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": -0.002522970239321391,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "2b63c238cddce4b48de2c0238c9de507238460ce840ea636c9270fe3e1a45e88",
+              "gain_vs_OFF": 0.0036343683799107867,
+              "integrity_sha256": "08c0b316d4c95dde7dd672a884e6e7f934de7fc8efc8f11cd944e2e6bdb8d3df",
+              "native_effective_strengths": [
+                0.5,
+                0.0,
+                0.5,
+                0.0,
+                0.0,
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "constant": {
+              "png_sha256": "04025c58faa9f6d0d1ae8d961a9e2e170f295650a03a07d2dd08e3ba656c2b5c",
+              "gain_vs_OFF": 0.006157338619232178,
+              "integrity_sha256": "eb2eeffebc9cd35dc0d0117891ea0ef80f9ac6c4faa74f25181c73a3183979eb",
+              "native_effective_strengths": [
+                0.4008915424346924,
+                0.4008915424346924,
+                0.4008915424346924,
+                0.4008915424346924,
+                0.4008915424346924,
+                0.4008915424346924,
+                0.4008915424346924,
+                0.4008915424346924,
+                0.4008915424346924
+              ]
+            },
+            "OFF": {
+              "png_sha256": "6ce1f4eaf27204b8c7ff057f08044f3c5ec265b3f377cb964e3c433785f725a9",
+              "mean_margin": -0.00020730371276537576
+            }
+          }
+        },
+        {
+          "case": "sailboat-seed49001",
+          "seed": 49001,
+          "matched_sigma_weighted_strength": 0.27837319672107697,
+          "fired": 5,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": -0.001662073036034902,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "73350d034aaa86fa4550328abf7ec776d048f769766fef2c9f0db3aa00cd9f9d",
+              "gain_vs_OFF": 0.0013303073743979135,
+              "integrity_sha256": "95aaba2819f132b7300802c59b1b05441c801eb7da09fd34f1095c567540027c",
+              "native_effective_strengths": [
+                0.5,
+                0.0,
+                0.0,
+                0.0,
+                0.5,
+                0.5,
+                0.5,
+                0.5,
+                0.0
+              ]
+            },
+            "constant": {
+              "png_sha256": "19f446758f1880afab6f875dafd2ab2dcdfc9e7b191afeeb04ee7d3640e9f46f",
+              "gain_vs_OFF": 0.0029923804104328156,
+              "integrity_sha256": "cac129f5486f6386eaa016b7032ed914e01e910a95acef5925bce92ce2e607c8",
+              "native_effective_strengths": [
+                0.27837319672107697,
+                0.27837319672107697,
+                0.27837319672107697,
+                0.27837319672107697,
+                0.27837319672107697,
+                0.27837319672107697,
+                0.27837319672107697,
+                0.27837319672107697,
+                0.27837319672107697
+              ]
+            },
+            "OFF": {
+              "png_sha256": "e92905b98a0cf8bac9d156a7846fb9a142cb7baea57a92692bc50b51f0475ddb",
+              "mean_margin": -0.004419976224501927
+            }
+          }
+        },
+        {
+          "case": "sailboat-seed49002",
+          "seed": 49002,
+          "matched_sigma_weighted_strength": 0.12358057498931885,
+          "fired": 4,
+          "eligible": 9,
+          "gate_minus_equal_dose_constant": 0.004261527210474014,
+          "arms": {
+            "adaptive": {
+              "png_sha256": "21aeac0f48430caca0902f41d9b4457406bfe030ea36f55ba717bf5c65de72e5",
+              "gain_vs_OFF": 0.003906043867270152,
+              "integrity_sha256": "07462d8422f46d3e72d19f9aec9e7c6b7dcf39e7411d0b2e48e0a87639117ba7",
+              "native_effective_strengths": [
+                0.5,
+                0.0,
+                0.5,
+                0.5,
+                0.5,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "constant": {
+              "png_sha256": "10855fd07e71db51a89be49742e723d06f4b37c73135ceaca9b111e5fee3e709",
+              "gain_vs_OFF": -0.0003554833432038622,
+              "integrity_sha256": "0f9c2bb96fdcecefa8a577bb471a865b4a5ceddb98c83aa2865624bba21a3c6a",
+              "native_effective_strengths": [
+                0.12358057498931885,
+                0.12358057498931885,
+                0.12358057498931885,
+                0.12358057498931885,
+                0.12358057498931885,
+                0.12358057498931885,
+                0.12358057498931885,
+                0.12358057498931885,
+                0.12358057498931885
+              ]
+            },
+            "OFF": {
+              "png_sha256": "a55c61b77827725a031799462eaf2dfb60804eb5ba6b51ecd647ec3b77717b3d",
+              "mean_margin": -0.005519366512695949
+            }
+          }
+        }
+      ]
+    }
+  },
+  "unique_finished_PNGs": 22,
+  "independent_integrity_passes": 24,
+  "fresh_GPU_effect_calls": 16,
+  "reused_GPU_effect_firsts": 12,
+  "fixed_profile_reference_means": {
+    "constant": 0.0034717128922541938,
+    "early": 0.005547834560275078,
+    "late": 0.0011708267653981845
+  },
+  "provenance": {
+    "qualified_calibration_sha256": "a3c2ff946bccc69c2642bb89238a0172a3ea14474c104c573c21836dc569a3b8",
+    "native_capture_sha256": "4d14ee7048db3a603e368083b187d897914484ea2674495135d3115a5e82b249",
+    "integrity_sha256": "281fa1f7b408b073156766933cae727c2aa833f595a41573bb18873bf81d502b",
+    "effect_sha256": "8514043a5ff62b750e3df1de4287c6c57898a2ec892ea215ff32dc16ed87a313",
+    "final_receipt_sha256": "40915519a4315641771d3f9ff64f3f81a8dce65ec3a97094aad5a68097b44790"
+  }
+}
