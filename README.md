@@ -209,19 +209,27 @@ Fit the direction on paired target and neutral pre-edit latent trajectories.
 Choose the threshold or bias on separate active calibration renders at the
 declared firing budget. On each held-out prompt and seed, divide the gate's
 actual sigma-weighted strength by the total native interval width to obtain
-that case's dose-matched constant. Compare the gate, constant and random
-control under the same checkpoint, seed, Euler grid and OFF reference.
+the ideal constant. Use the nearest value representable at the adapter's
+native scalar precision. Compare the gate, constant and random control under
+the same checkpoint, seed, Euler grid and OFF reference.
 
 The Golden Hour RAW64 study used the original 512-pixel BF16 CUDA CFG0
 runtime, nine Euler intervals and pinned FP32 VAE. At the 50% calibration
 target, CFP fired on 19 of 36 intervals and CLABS on 17 of 36. On four
 held-out cases, CFP improved mean Golden Hour intensity by +0.00361 over OFF
-and +0.00232 over its same-dose constant. CLABS measured +0.00390 over OFF
-and +0.00234 over its same-dose constant. Each gate had two wins and two ties
+and +0.00232 over its constant control. CLABS measured +0.00390 over OFF
+and +0.00234 over its constant control. Each gate had two wins and two ties
 against its control. All 24 gate and control images passed independent
 integrity checks. The archived early-heavy fixed schedule had mean gain
 +0.00555 over OFF on the same cases and remains the measured preset.
 [Per-case adaptive results](docs/golden-hour-raw64-adaptive-strength.json).
+
+The archived runtime applies the scale as an FP32 scalar in its CUDA
+multiplication. All twelve CFP, CLABS and random controls used the nearest
+representable constant. At that precision, nine pairs matched the integrated
+dose exactly. The largest absolute residual was 1.49 × 10⁻⁸.
+[Pinned scalar multiplication](https://github.com/pytorch/pytorch/blob/70d99e998b4955e0049d13a98d77ae1b14db1f45/aten/src/ATen/native/cuda/BinaryMulKernel.cu) ·
+[Shared interval dose calculation](https://github.com/HyperGAN/particle-sliders/blob/07dbd331c3a548709949032c01ce19e7c64a2520/packages/particle-sliders-core/src/particle_sliders/strength_schedule.py).
 
 #### Replay the measured gate
 
